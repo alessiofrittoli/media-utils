@@ -21,6 +21,8 @@
 ### Table of Contents
 
 - [Getting started](#getting-started)
+- [API Reference](#api-reference)
+  - [MIME types](#mime-types)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
   - [Build the source code](#build-the-source-code)
@@ -47,6 +49,139 @@ pnpm i @alessiofrittoli/media-utils
 ```
 
 ---
+
+### API Reference
+
+#### MIME types
+
+##### `getMimeType`
+
+Get the MIME type from the given `input` string.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type        | Description                                                                                                                 |
+| --------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `input`   | `string`    | The input string where MIME type is extracted from.                                                                         |
+| `type`    | `MediaType` | (Optional) Accepted media type. This may be usefull when subtype matches other media types (eg. `audio/mp4` - `video/mp4`). |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `MIMEType`
+
+- The MIME type if found.
+- `undefined` otherwise.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { getMimeType } from "@alessiofrittoli/media-utils";
+// or
+import { getMimeType } from "@alessiofrittoli/media-utils/mime";
+
+console.log(getMimeType("/path/to/video-file.mp4")); // Outputs: 'video/mp4'
+console.log(getMimeType("/path/to/audio-file.mp4", "audio")); // Outputs: 'audio/mp4'
+console.log(getMimeType("/path/to/audio-file.mp3")); // Outputs: 'audio/mpeg'
+```
+
+</details>
+
+---
+
+##### `getAllowedMimeTypes`
+
+Get allowed MIME types.
+
+<!-- /**
+ *
+ * @param accept (Optional) A string describing allowed MIME types.
+ * 	The format is the same accepted by {@link HTMLInputElement.accept} attribute.
+ *
+ * 	It could be one of the following examples:
+ * 	- `*`
+ * 	- `image` (type)
+ * 	- `image/*` ({type}/{subtype})
+ * 	- `image/png` ({type}/{subtype}) - specific
+ * 	- `.png` (extension)
+ * 	- `image,audio` (multiple types)
+ * 	- `image/*,audio/*` (multiple {type}/{subtype})
+ * 	- `.png, .mp3` (multiple extensions)
+ * 	- `.docx, audio, video/*, text/html` (mixed)
+ *
+ * @returns An array of MIME types based on the `accept` value. `[ '*' ]` if a wildcard or no `accept` is given.
+ */
+export const getAllowedMimeTypes = ( accept?: string ) => { -->
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type     | Description                                                                                                                                         |
+| --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accept`  | `string` | (Optioanl) A string describing allowed MIME types.                                                                                                  |
+|           |          | The format is the same accepted by [`HTMLInputElement.accept`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/accept) attribute. |
+|           |          | It could be one of the following examples:                                                                                                          |
+|           |          | `*`                                                                                                                                                 |
+|           |          | `image` (type)                                                                                                                                      |
+|           |          | `image/*` ({type}/{subtype})                                                                                                                        |
+|           |          | `image/png` ({type}/{subtype}) - specific                                                                                                           |
+|           |          | `.png` (extension)                                                                                                                                  |
+|           |          | `image,audio` (multiple types)                                                                                                                      |
+|           |          | `image/*,audio/*` (multiple {type}/{subtype})                                                                                                       |
+|           |          | `.png, .mp3` (multiple extensions)                                                                                                                  |
+|           |          | `.docx, audio, video/*, text/html` (mixed)                                                                                                          |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `(MIMEType | '*')[]`
+
+An array of MIME types based on the `accept` value. `[ '*' ]` if a wildcard or no `accept` is given.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { getAllowedMimeTypes } from "@alessiofrittoli/media-utils";
+// or
+import { getAllowedMimeTypes } from "@alessiofrittoli/media-utils/mime";
+
+console.log(getAllowedMimeTypes());
+console.log(getAllowedMimeTypes("*"));
+console.log(getAllowedMimeTypes("image"));
+console.log(getAllowedMimeTypes("audio/*"));
+console.log(getAllowedMimeTypes("image,video"));
+console.log(getAllowedMimeTypes("image/*,video/*"));
+console.log(getAllowedMimeTypes(".mp3,mp4"));
+console.log(getAllowedMimeTypes(".jpg, .png"));
+console.log(getAllowedMimeTypes("image/jpeg,.jpg"));
+```
+
+</details>
 
 ### Development
 

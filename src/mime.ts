@@ -340,8 +340,9 @@ export const getFileExtension = ( filename: string ) => (
 /**
  * Get the MIME type from the given `input` string.
  * 
- * @param input The input string where MIME type is extracted from.
- * @param type (Optional) Accepted media types. This may be usefull when subtype matches other media types (eg. `audio/mp4` - `video/mp4`).
+ * @param	input	The input string where MIME type is extracted from.
+ * @param	type	(Optional) Accepted media type. This may be usefull when subtype matches other media types (eg. `audio/mp4` - `video/mp4`).
+ * 
  * @returns The MIME type if found, `undefined` otherwise.
  * 
  * @example
@@ -398,9 +399,12 @@ const isMimeType = ( input: string ): input is MIMEType => (
 
 
 /**
- * Get allowed MIME types based on {@link HTMLInputElement.accept} atribute value.
+ * Get allowed MIME types.
  * 
- * @param accept (Optional) The {@link HTMLInputElement.accept} atribute value. It could be one of the following examples:
+ * @param accept (Optional) A string describing allowed MIME types.
+ * 	The format is the same accepted by {@link HTMLInputElement.accept} attribute.
+ * 
+ * 	It could be one of the following examples:
  * 	- `*`
  * 	- `image` (type)
  * 	- `image/*` ({type}/{subtype})
@@ -413,11 +417,11 @@ const isMimeType = ( input: string ): input is MIMEType => (
  * 
  * @returns An array of MIME types based on the `accept` value. `[ '*' ]` if a wildcard or no `accept` is given.
  */
-export const getAllowedMimeTypes = ( accept?: HTMLInputElement[ 'accept' ] ) => {
+export const getAllowedMimeTypes = ( accept?: string ): ( MIMEType | '*' )[] => {
 
 	if ( ! accept || accept === '*' ) return [ '*' ]
 
-	const allowedMimeTypes: string[] = []
+	const allowedMimeTypes: MIMEType[] = []
 
 	const accepted = (
 		accept
