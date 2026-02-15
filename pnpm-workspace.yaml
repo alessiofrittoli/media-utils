@@ -1,4 +1,3 @@
 onlyBuiltDependencies:
-  - '@alessiofrittoli/type-utils'
   - esbuild
   - unrs-resolver

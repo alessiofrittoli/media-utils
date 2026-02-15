@@ -1,7 +1,7 @@
 {
-	"name": "@alessiofrittoli/node-module-starter",
-	"version": "1.15.0",
-	"description": "Starter repository for developing node_modules",
+	"name": "@alessiofrittoli/media-utils",
+	"version": "0.1.0",
+	"description": "TypeScript media utility library",
 	"author": {
 		"name": "Alessio Frittoli",
 		"email": "info@alessiofrittoli.it",
@@ -19,14 +19,14 @@
 		"npm",
 		"node_modules"
 	],
-	"homepage": "https://github.com/alessiofrittoli/node-module-starter#readme",
+	"homepage": "https://github.com/alessiofrittoli/media-utils#readme",
 	"bugs": {
-		"url": "https://github.com/alessiofrittoli/node-module-starter/issues",
+		"url": "https://github.com/alessiofrittoli/media-utils/issues",
 		"email": "info@alessiofrittoli.it"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/alessiofrittoli/node-module-starter.git"
+		"url": "git+https://github.com/alessiofrittoli/media-utils.git"
 	},
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -43,7 +43,7 @@
 		"build:prod": "cross-env NODE_ENV=production tsup",
 		"build": "pnpm lint && pnpm test:ci && pnpm build:prod",
 		"lint": "eslint",
-		"release": "node scripts/release.js --verbose",
+		"release": "node scripts/release.js --verbose --npm",
 		"//2a": "*********************************************************************",
 		"//2b": "***************************** UNIT TESTS ****************************",
 		"//2c": "*********************************************************************",
