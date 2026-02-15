@@ -33,7 +33,8 @@
 	},
 	"include": [
 		"src",
-		"__tests__"
+		"__tests__",
+		"alessiofrittoli-env.d.ts"
 	],
 	"exclude": [
 		"node_modules",

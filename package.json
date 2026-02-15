@@ -34,6 +34,28 @@
 	"files": [
 		"dist"
 	],
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			}
+		},
+		"./mime": {
+			"import": {
+				"types": "./dist/mime.d.mts",
+				"default": "./dist/mime.mjs"
+			},
+			"require": {
+				"types": "./dist/mime.d.ts",
+				"default": "./dist/mime.js"
+			}
+		}
+	},
 	"sideEffects": false,
 	"scripts": {
 		"//1a": "*********************************************************************",
@@ -60,7 +82,7 @@
 		"//4a": "*********************************************************************",
 		"//4b": "************************ TARGETED UNIT TESTS ************************",
 		"//4c": "*********************************************************************",
-		"test:jest": "pnpm test:watch jest.test.ts"
+		"test:mime": "pnpm test:watch mime.test.ts"
 	},
 	"devDependencies": {
 		"@alessiofrittoli/node-scripts": "3.3.0",
@@ -81,5 +103,8 @@
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.55.0"
+	},
+	"dependencies": {
+		"@alessiofrittoli/web-utils": "^1.20.0"
 	}
 }
