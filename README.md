@@ -23,6 +23,7 @@
 - [Getting started](#getting-started)
 - [API Reference](#api-reference)
   - [MIME types](#mime-types)
+  - [MediaSession](#mediasession)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
   - [Build the source code](#build-the-source-code)
@@ -90,8 +91,6 @@ Type: `MIMEType`
 
 ```ts
 import { getMimeType } from "@alessiofrittoli/media-utils";
-// or
-import { getMimeType } from "@alessiofrittoli/media-utils/mime";
 
 console.log(getMimeType("/path/to/video-file.mp4")); // Outputs: 'video/mp4'
 console.log(getMimeType("/path/to/audio-file.mp4", "audio")); // Outputs: 'audio/mp4'
@@ -105,26 +104,6 @@ console.log(getMimeType("/path/to/audio-file.mp3")); // Outputs: 'audio/mpeg'
 ##### `getAllowedMimeTypes`
 
 Get allowed MIME types.
-
-<!-- /**
- *
- * @param accept (Optional) A string describing allowed MIME types.
- * 	The format is the same accepted by {@link HTMLInputElement.accept} attribute.
- *
- * 	It could be one of the following examples:
- * 	- `*`
- * 	- `image` (type)
- * 	- `image/*` ({type}/{subtype})
- * 	- `image/png` ({type}/{subtype}) - specific
- * 	- `.png` (extension)
- * 	- `image,audio` (multiple types)
- * 	- `image/*,audio/*` (multiple {type}/{subtype})
- * 	- `.png, .mp3` (multiple extensions)
- * 	- `.docx, audio, video/*, text/html` (mixed)
- *
- * @returns An array of MIME types based on the `accept` value. `[ '*' ]` if a wildcard or no `accept` is given.
- */
-export const getAllowedMimeTypes = ( accept?: string ) => { -->
 
 <details>
 
@@ -167,8 +146,6 @@ An array of MIME types based on the `accept` value. `[ '*' ]` if a wildcard or n
 
 ```ts
 import { getAllowedMimeTypes } from "@alessiofrittoli/media-utils";
-// or
-import { getAllowedMimeTypes } from "@alessiofrittoli/media-utils/mime";
 
 console.log(getAllowedMimeTypes());
 console.log(getAllowedMimeTypes("*"));
@@ -182,6 +159,253 @@ console.log(getAllowedMimeTypes("image/jpeg,.jpg"));
 ```
 
 </details>
+
+---
+
+#### MediaSession
+
+##### Types
+
+###### MediaArtWork
+
+The Media Artwork.
+
+Compatible type with the global `MediaImage` interface.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property | Type       | Description                                                                                         |
+| -------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| `src`    | `UrlInput` | The Media Artwork image URL.                                                                        |
+|          |            | See [`UrlInput`](https://npmjs.com/package/@alessiofrittoli/url-utils#urlinput) type for more info. |
+| `size`   | `number`   | The Media Artwork image size.                                                                       |
+|          |            | Common values are: `96`, `128`, `192`, `256`, `384`, `512`.                                         |
+| `type`   | `MIMEType` | The Media Artwork image MIME type.                                                                  |
+
+</details>
+
+---
+
+###### Media
+
+Defines the media.
+
+Extends the global [`MediaMetadata`](https://developer.mozilla.org/en-US/docs/Web/API/MediaMetadata) interface.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property  | Type             | Description                                                                                         |
+| --------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| `src`     | `UrlInput`       | The media URL.                                                                                      |
+|           |                  | See [`UrlInput`](https://npmjs.com/package/@alessiofrittoli/url-utils#urlinput) type for more info. |
+| `type`    | `MIMEType`       | The media MIME type.                                                                                |
+| `title`   | `string`         | The title of the media.                                                                             |
+| `artwork` | `MediaArtWork[]` | The media artwork.                                                                                  |
+|           |                  | See [`MediaArtWork`](#mediaartwork) type for more info.                                             |
+| `artist`  | `string`         | The artist of the media.                                                                            |
+| `album`   | `string`         | The album of the media.                                                                             |
+
+</details>
+
+---
+
+###### UpdateMediaMetadataAndPositionOptions
+
+Defines the MediaSession update options.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property | Type                 | Description             |
+| -------- | -------------------- | ----------------------- |
+| `media`  | `HTMLMediaElement`   | The HTMLMediaElement.   |
+| `data`   | `Omit<Media, 'src'>` | The playing media data. |
+
+</details>
+
+---
+
+##### updatePositionState
+
+Update `MediaSession` position state.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type               | Description           |
+| --------- | ------------------ | --------------------- |
+| `media`   | `HTMLMediaElement` | The HTMLMediaElement. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { updatePositionState } from "@alessiofrittoli/media-utils";
+
+navigator.mediaSession.setActionHandler("seekto", (details) => {
+  if (typeof details.seekTime === "undefined") return;
+
+  media.currentTime = details.seekTime;
+
+  updatePositionState(media);
+});
+```
+
+</details>
+
+---
+
+##### updateMediaMetadata
+
+Update `MediaSession` metadata.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                 | Description             |
+| --------- | -------------------- | ----------------------- |
+| `data`    | `Omit<Media, 'src'>` | The playing media data. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { updateMediaMetadata } from "@alessiofrittoli/media-utils";
+
+media.play().then(() => {
+  updateMediaMetadata({
+    type: "audio/mpeg",
+    title: "Song name",
+    album: "Album name",
+    artist: "Artist name",
+    artwork: [
+      {
+        src: { pathname: "/path-to-image-96.png" },
+        size: 96,
+        type: "image/png",
+      },
+      {
+        src: { pathname: "/path-to-image-128.png" },
+        size: 128,
+        type: "image/png",
+      },
+      {
+        src: { pathname: "/path-to-image-192.png" },
+        size: 192,
+        type: "image/png",
+      },
+      {
+        src: { pathname: "/path-to-image-256.png" },
+        size: 256,
+        type: "image/png",
+      },
+      {
+        src: { pathname: "/path-to-image-384.png" },
+        size: 384,
+        type: "image/png",
+      },
+      {
+        src: { pathname: "/path-to-image-512.png" },
+        size: 512,
+        type: "image/png",
+      },
+    ],
+  });
+});
+```
+
+</details>
+
+---
+
+##### updateMediaMetadataAndPosition
+
+Update `MediaSession` metadata and position state.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                                    | Description                                                                                                                                                           |
+| --------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `options` | `UpdateMediaMetadataAndPositionOptions` | An object defining `media` HTMLMediaElement and associated data. See [`UpdateMediaMetadataAndPositionOptions`](#updatemediametadataandpositionoptions) for more info. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { updateMediaMetadataAndPosition } from "@alessiofrittoli/media-utils";
+
+media.play().then(() => {
+  updateMediaMetadataAndPosition({
+    media,
+    data: {
+      type: "audio/mpeg",
+      title: "Song name",
+      album: "Album name",
+      artist: "Artist name",
+      artwork: [
+        {
+          src: { pathname: "/path-to-image-96.png" },
+          size: 96,
+          type: "image/png",
+        },
+        {
+          src: { pathname: "/path-to-image-128.png" },
+          size: 128,
+          type: "image/png",
+        },
+        {
+          src: { pathname: "/path-to-image-192.png" },
+          size: 192,
+          type: "image/png",
+        },
+        {
+          src: { pathname: "/path-to-image-256.png" },
+          size: 256,
+          type: "image/png",
+        },
+        {
+          src: { pathname: "/path-to-image-384.png" },
+          size: 384,
+          type: "image/png",
+        },
+        {
+          src: { pathname: "/path-to-image-512.png" },
+          size: 512,
+          type: "image/png",
+        },
+      ],
+    },
+  });
+});
+```
+
+</details>
+
+---
 
 ### Development
 

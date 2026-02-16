@@ -92,7 +92,7 @@ export interface UpdateMediaMetadataAndPositionOptions
 
 
 /**
- * Update MediaSession position state.
+ * Update `MediaSession` position state.
  * 
  * @param media The HTMLMediaElement.
  */
@@ -112,7 +112,7 @@ export const updatePositionState = ( media: HTMLMediaElement ) => {
 
 
 /**
- * Update MediaSession metadata.
+ * Update `MediaSession` metadata.
  * 
  * @param data The playing media data.
  */
@@ -134,7 +134,7 @@ export const updateMediaMetadata = ( data: Omit<Media, 'src'> ) => {
 
 
 /**
- * Update MediaSession metadata.
+ * Update `MediaSession` metadata and position state.
  * 
  * @param options An object defining `media` HTMLMediaElement and associated data. See {@link UpdateMediaMetadataAndPositionOptions} for more info.
  */
