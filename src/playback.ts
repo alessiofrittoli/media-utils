@@ -53,23 +53,25 @@ export const playMedia = ( options: PlayMediaOptions ) => {
 
 	media.volume = 0
 
-	media.play()
-		.then( () => {
-			updateMediaMetadataAndPosition( { media, data } )
-			fadeVolume( media, {
-				to		: volume,
-				duration: fade,
-				easing, ...rest,
+	return (
+		media.play()
+			.then( () => {
+				updateMediaMetadataAndPosition( { media, data } )
+				fadeVolume( media, {
+					to		: volume,
+					duration: fade,
+					easing, ...rest,
+				} )
 			} )
-		} )
-		.catch( err => {
-			media.volume = 1
-			
-			if ( onError && media.error ) {
-				return onError( media.error )
-			}
-			console.error( media.error || err )
-		} )
+			.catch( err => {
+				media.volume = 1
+
+				if ( onError && media.error ) {
+					return onError( media.error )
+				}
+				console.error( media.error || err )
+			} )
+	)
 }
 
 
