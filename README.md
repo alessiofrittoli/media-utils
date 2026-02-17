@@ -58,7 +58,7 @@ pnpm i @alessiofrittoli/media-utils
 
 #### MIME types
 
-##### `getMimeType`
+##### `getMimeType()`
 
 Get the MIME type from the given `input` string.
 
@@ -104,7 +104,7 @@ console.log(getMimeType("/path/to/audio-file.mp3")); // Outputs: 'audio/mpeg'
 
 ---
 
-##### `getAllowedMimeTypes`
+##### `getAllowedMimeTypes()`
 
 Get allowed MIME types.
 
@@ -169,7 +169,7 @@ console.log(getAllowedMimeTypes("image/jpeg,.jpg"));
 
 ##### Types
 
-###### MediaArtWork
+###### `MediaArtWork`
 
 The Media Artwork.
 
@@ -191,7 +191,7 @@ Compatible type with the global `MediaImage` interface.
 
 ---
 
-###### Media
+###### `Media`
 
 Defines the media.
 
@@ -216,7 +216,7 @@ Extends the global [`MediaMetadata`](https://developer.mozilla.org/en-US/docs/We
 
 ---
 
-###### UpdateMediaMetadataAndPositionOptions
+###### `UpdateMediaMetadataAndPositionOptions`
 
 Defines the MediaSession update options.
 
@@ -233,7 +233,7 @@ Defines the MediaSession update options.
 
 ---
 
-##### updatePositionState
+##### `updatePositionState()`
 
 Update `MediaSession` position state.
 
@@ -269,7 +269,7 @@ navigator.mediaSession.setActionHandler("seekto", (details) => {
 
 ---
 
-##### updateMediaMetadata
+##### `updateMediaMetadata()`
 
 Update `MediaSession` metadata.
 
@@ -338,7 +338,7 @@ media.play().then(() => {
 
 ---
 
-##### updateMediaMetadataAndPosition
+##### `updateMediaMetadataAndPosition()`
 
 Update `MediaSession` metadata and position state.
 
@@ -410,7 +410,7 @@ media.play().then(() => {
 
 ---
 
-#### AudioEngine
+#### `AudioEngine`
 
 Manages volume manipulation for HTML media elements.
 
