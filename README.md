@@ -27,6 +27,7 @@
   - [AudioEngine](#audioengine)
     - [Audio Engine Manager](#audio-engine-manager)
     - [Audio Utilities](#audio-utilities)
+  - [Media Playback](#media-playback)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
   - [Build the source code](#build-the-source-code)
@@ -117,15 +118,15 @@ Get allowed MIME types.
 | `accept`  | `string` | (Optioanl) A string describing allowed MIME types.                                                                                                  |
 |           |          | The format is the same accepted by [`HTMLInputElement.accept`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/accept) attribute. |
 |           |          | It could be one of the following examples:                                                                                                          |
-|           |          | `*`                                                                                                                                                 |
-|           |          | `image` (type)                                                                                                                                      |
-|           |          | `image/*` ({type}/{subtype})                                                                                                                        |
-|           |          | `image/png` ({type}/{subtype}) - specific                                                                                                           |
-|           |          | `.png` (extension)                                                                                                                                  |
-|           |          | `image,audio` (multiple types)                                                                                                                      |
-|           |          | `image/*,audio/*` (multiple {type}/{subtype})                                                                                                       |
-|           |          | `.png, .mp3` (multiple extensions)                                                                                                                  |
-|           |          | `.docx, audio, video/*, text/html` (mixed)                                                                                                          |
+|           |          | - `*`                                                                                                                                               |
+|           |          | - `image` (type)                                                                                                                                    |
+|           |          | - `image/*` ({type}/{subtype})                                                                                                                      |
+|           |          | - `image/png` ({type}/{subtype}) - specific                                                                                                         |
+|           |          | - `.png` (extension)                                                                                                                                |
+|           |          | - `image,audio` (multiple types)                                                                                                                    |
+|           |          | - `image/*,audio/*` (multiple {type}/{subtype})                                                                                                     |
+|           |          | - `.png, .mp3` (multiple extensions)                                                                                                                |
+|           |          | - `.docx, audio, video/*, text/html` (mixed)                                                                                                        |
 
 </details>
 
@@ -346,9 +347,10 @@ Update `MediaSession` metadata and position state.
 
 <summary style="cursor:pointer">Parameters</summary>
 
-| Parameter | Type                                    | Description                                                                                                                                                           |
-| --------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `options` | `UpdateMediaMetadataAndPositionOptions` | An object defining `media` HTMLMediaElement and associated data. See [`UpdateMediaMetadataAndPositionOptions`](#updatemediametadataandpositionoptions) for more info. |
+| Parameter | Type                                    | Description                                                                                          |
+| --------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `options` | `UpdateMediaMetadataAndPositionOptions` | An object defining `media` HTMLMediaElement and associated data.                                     |
+|           |                                         | See [`UpdateMediaMetadataAndPositionOptions`](#updatemediametadataandpositionoptions) for more info. |
 
 </details>
 
@@ -449,11 +451,11 @@ Callback executed on each interpolation tick.
 | `to`       | `number`      | -               | Defines the final volume to set [0-1].                                                                                          |
 | `duration` | `number`      | `200`           | (Optional) Duration of the tween in milliseconds.                                                                               |
 | `onTick`   | `TickHandler` | -               | Callback executed on each interpolation tick.                                                                                   |
-|            |               | -               | See [`TickHandler`](#tickhandler) types for more info.                                                                          |
+|            |               |                 | See [`TickHandler`](#tickhandler) types for more info.                                                                          |
 | `onEnd`    | `TickHandler` | -               | (Optional) Callback executed when the interpolation completes.                                                                  |
-|            |               | -               | See [`TickHandler`](#tickhandler) types for more info.                                                                          |
+|            |               |                 | See [`TickHandler`](#tickhandler) types for more info.                                                                          |
 | `easing`   | `EasingFn`    | `Easing.linear` | (Optional) Easing function used to transform the linear time progression.                                                       |
-|            |               | -               | See [`EasingFn`](https://github.com/alessiofrittoli/math-utils/blob/master/docs/easing/README.md#easingfn) types for more info. |
+|            |               |                 | See [`EasingFn`](https://github.com/alessiofrittoli/math-utils/blob/master/docs/easing/README.md#easingfn) types for more info. |
 | `Hz`       | `number`      | `120`           | (Optional) Custom tick rate in Hz.                                                                                              |
 
 </details>
@@ -470,9 +472,10 @@ Fade media volume.
 
 <summary style="cursor:pointer">Parameters</summary>
 
-| Parameter | Type                | Description                                                                                                  |
-| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `options` | `FadeVolumeOptions` | An object defining customization and callbacks. See [`FadeVolumeOptions`](#fadevolumeoptions) for more info. |
+| Parameter | Type                | Description                                                  |
+| --------- | ------------------- | ------------------------------------------------------------ |
+| `options` | `FadeVolumeOptions` | An object defining customization and callbacks.              |
+|           |                     | See [`FadeVolumeOptions`](#fadevolumeoptions) for more info. |
 
 </details>
 
@@ -813,10 +816,11 @@ This utility function acts as a wrapper handling [`AudioEngine`](#audioengine) i
 
 <summary style="cursor:pointer">Parameters</summary>
 
-| Parameter | type                | Decription                                                                                                   |
-| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `media`   | `HTMLMediaElement`  | The HTMLMediaElement.                                                                                        |
-| `options` | `FadeVolumeOptions` | An object defining customization and callbacks. See [`FadeVolumeOptions`](#fadevolumeoptions) for more info. |
+| Parameter | type                | Decription                                                   |
+| --------- | ------------------- | ------------------------------------------------------------ |
+| `media`   | `HTMLMediaElement`  | The HTMLMediaElement.                                        |
+| `options` | `FadeVolumeOptions` | An object defining customization and callbacks.              |
+|           |                     | See [`FadeVolumeOptions`](#fadevolumeoptions) for more info. |
 
 </details>
 
@@ -833,6 +837,152 @@ const play = (media: HTMLMediaElement) => {
     fadeVolume(media, { to: 1 });
   });
 };
+```
+
+</details>
+
+---
+
+#### Media Playback
+
+#### Media Playback types
+
+##### `PlayMediaOptions`
+
+An object defining play options and callbacks.
+
+It extends [`UpdateMediaMetadataAndPositionOptions`](#updatemediametadataandpositionoptions) and [`FadeVolumeOptions`](#fadevolumeoptions) interfaces and adds/overrides the following properties.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property  | Type                            | Default | Description                                                                      |
+| --------- | ------------------------------- | ------- | -------------------------------------------------------------------------------- |
+| `volume`  | `number`                        | -       | Defines the final volume to set [0-1].                                           |
+|           |                                 |         | - overrides `FadeVolumeOptions['to']`                                            |
+| `fade`    | `number`                        | `200`   | (Optional) A custom volume fade duration in milliseconds.                        |
+|           |                                 |         | - overrides `FadeVolumeOptions['duration']`                                      |
+| `onError` | `( error: MediaError ) => void` | -       | (Optional) A custom callback executed when an error occurs when playing a media. |
+
+</details>
+
+---
+
+##### `PauseMediaOptions`
+
+An object defining pause options and callbacks.
+
+It extends [`PlayMediaOptions`](#playmediaoptions) and omits unnecessary properties.
+
+---
+
+#### `playMedia()`
+
+Play the given media.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type               | Description                                                |
+| --------- | ------------------ | ---------------------------------------------------------- |
+| `options` | `PlayMediaOptions` | An object defining play options and callbacks.             |
+|           |                    | See [`PlayMediaOptions`](#playmediaoptions) for more info. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `Promise<void>`
+
+A new `Promise` which resolves once `media.play()` promise is resolved.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { playMedia } from "@alessiofrittoli/media-utils";
+
+const media = new Audio( ... )
+
+play.addEventListener("click", () => {
+
+  playMedia( {
+    media,
+    volume: 1,
+    fade: 800,
+    data: {
+      type: 'audio/mpeg',
+      title: 'Media title',
+    },
+    onError( error ) {
+      switch ( error.code ) {
+        case MediaError.MEDIA_ERR_ABORTED:
+          console.error( 'The fetching of the associated resource was aborted by the user\'s request.' )
+          break
+        case MediaError.MEDIA_ERR_NETWORK:
+          console.error( 'Some kind of network error occurred which prevented the media from being successfully fetched, despite having previously been available.' )
+          break
+        case MediaError.MEDIA_ERR_DECODE:
+          console.error( 'Despite having previously been determined to be usable, an error occurred while trying to decode the media resource, resulting in an error.' )
+          break
+        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+          console.error( 'The associated resource or media provider object (such as a MediaStream) has been found to be unsuitable.' )
+          break
+        default:
+          console.error( 'Unknow error.' )
+      }
+    },
+  } )
+
+});
+```
+
+</details>
+
+---
+
+#### `pauseMedia()`
+
+Pause the given media.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                | Description                                                                 |
+| --------- | ------------------- | --------------------------------------------------------------------------- |
+| `options` | `PauseMediaOptions` | An object defining pause options and callbacks.                             |
+|           |                     | See [`PauseMediaOptions`](#pausemediaoptions) for more info. for more info. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { pauseMedia } from "@alessiofrittoli/media-utils";
+
+const media = new Audio( ... )
+
+pause.addEventListener("click", () => {
+
+  pauseMedia( { media, fade: 800 } )
+
+});
 ```
 
 </details>

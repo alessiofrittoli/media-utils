@@ -22,6 +22,7 @@ export interface PlayMediaOptions extends UpdateMediaMetadataAndPositionOptions,
 	/**
 	 * A custom volume fade duration in milliseconds.
 	 * 
+	 * @default 200
 	 */
 	fade?: number
 	/**
@@ -37,7 +38,7 @@ export interface PlayMediaOptions extends UpdateMediaMetadataAndPositionOptions,
  * An object defining pause options and callbacks.
  * 
  */
-export type PauseMediaOptions = Omit<PlayMediaOptions, 'data' | 'volume'>
+export type PauseMediaOptions = Omit<PlayMediaOptions, 'data' | 'volume' | 'onError'>
 
 
 /**
