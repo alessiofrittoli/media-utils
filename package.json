@@ -1,6 +1,6 @@
 {
 	"name": "@alessiofrittoli/media-utils",
-	"version": "1.0.0-alpha.4",
+	"version": "1.0.0-alpha.5",
 	"description": "TypeScript media utility library",
 	"author": {
 		"name": "Alessio Frittoli",
@@ -102,7 +102,7 @@
 		"ts-node": "^10.9.2",
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.55.0"
+		"typescript-eslint": "^8.56.0"
 	},
 	"dependencies": {
 		"@alessiofrittoli/date-utils": "^4.1.0",
