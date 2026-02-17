@@ -1,5 +1,5 @@
 import { AudioEngine } from './engine'
-export * from '@/audio-engine/engine'
+export * from '@/audio/engine'
 
 const audioEngines = new WeakMap<HTMLMediaElement, AudioEngine>()
 

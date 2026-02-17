@@ -407,6 +407,282 @@ media.play().then(() => {
 
 ---
 
+#### AudioEngine
+
+Manages volume manipulation for HTML media elements.
+
+Provides methods for fading volume with customizable tweening, and utilities for converting
+between normalized volume values (0.0-1.0) and linear gain values using decibel-based calculations
+that better match human perception of audio loudness.
+
+##### AudioEngine Types
+
+###### `TickHandler`
+
+Callback executed on each interpolation tick.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type     | Description                     |
+| --------- | -------- | ------------------------------- |
+| `value`   | `number` | The current interpolated value. |
+
+</details>
+
+---
+
+###### `FadeVolumeOptions`
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property   | Type          | Default         | Description                                                                                                                     |
+| ---------- | ------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `to`       | `number`      | -               | Defines the final volume to set [0-1].                                                                                          |
+| `duration` | `number`      | `200`           | (Optional) Duration of the tween in milliseconds.                                                                               |
+| `onTick`   | `TickHandler` | -               | Callback executed on each interpolation tick.                                                                                   |
+|            |               | -               | See [`TickHandler`](#tickhandler) types for more info.                                                                          |
+| `onEnd`    | `TickHandler` | -               | (Optional) Callback executed when the interpolation completes.                                                                  |
+|            |               | -               | See [`TickHandler`](#tickhandler) types for more info.                                                                          |
+| `easing`   | `EasingFn`    | `Easing.linear` | (Optional) Easing function used to transform the linear time progression.                                                       |
+|            |               | -               | See [`EasingFn`](https://github.com/alessiofrittoli/math-utils/blob/master/docs/easing/README.md#easingfn) types for more info. |
+| `Hz`       | `number`      | `120`           | (Optional) Custom tick rate in Hz.                                                                                              |
+
+</details>
+
+---
+
+##### Methods
+
+###### `AudioEngine.fade()`
+
+Fade media volume.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                | Description                                                                                                  |
+| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `options` | `FadeVolumeOptions` | An object defining customization and callbacks. See [`FadeVolumeOptions`](#fadevolumeoptions) for more info. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { AudioEngine } from '@alessiofrittoli/media-utils/audio'
+
+const audio  = new Audio( ... )
+const engine = new AudioEngine( audio )
+
+audio.volume = 0
+audio.play()
+ .then( () => {
+   // Fade volume to 0.5 over 2 seconds
+   engine.fade( {
+     to         : 1,
+     duration   : 2000,
+   } )
+ } )
+```
+
+</details>
+
+---
+
+##### Static methods
+
+###### `AudioEngine.VolumeToGain()`
+
+Converts a volume value (0.0 to 1.0) to a linear gain value.
+
+The returned value will better match the human perceived volume.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type     | Description                                                                   |
+| --------- | -------- | ----------------------------------------------------------------------------- |
+| `volume`  | `number` | The volume value, where 0 represents silence and 1 represents maximum volume. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `number`.
+
+The corresponding linear gain value, or 0 if the gain is effectively inaudible.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { AudioEngine } from '@alessiofrittoli/media-utils/audio'
+
+const audio  = new Audio( ... )
+const engine = new AudioEngine( audio )
+
+audio.volume = 0
+audio.play()
+  .then( () => {
+    engine.fade( {
+      to: AudioEngine.VolumeToGain( 0.5 ),
+      onEnd() {
+        console.log( audio.volume ) // Outputs: `0.03162277660168379`
+      },
+    } )
+  } )
+```
+
+</details>
+
+---
+
+###### `AudioEngine.GainToVolume()`
+
+Converts a linear gain value to a normalized volume value between 0 and 1.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type     | Description                       |
+| --------- | -------- | --------------------------------- |
+| `gain`    | `number` | The linear gain value to convert. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `number`.
+
+The normalized volume value in the range [0, 1].
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { AudioEngine } from '@alessiofrittoli/media-utils/audio'
+
+const audio  = new Audio( ... )
+const engine = new AudioEngine( audio )
+
+audio.volume = 0
+audio.play()
+  .then( () => {
+    engine.fade( {
+      to: AudioEngine.VolumeToGain( 0.5 ),
+      onEnd() {
+        console.log( audio.volume ) // Outputs: `0.03162277660168379`
+        console.log( AudioEngine.GainToVolume( audio.volume ) ) // Outputs: `0.5`
+      },
+    } )
+  } )
+```
+
+</details>
+
+---
+
+###### `AudioEngine.normalize()`
+
+Conditionally normalize volume using [`AudioEngine.VolumeToGain`](#audioenginevolumetogain).
+
+This method acts as a wrapper and has the same API of [`AudioEngine.VolumeToGain()`](#audioenginevolumetogain) but it accepts a boolean value
+as second argument that allows you to quickly opt-in/opt-out based on an incoming variable,
+thus there is no need to call `AudioEngine.VolumeToGain()` conditionally.
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { AudioEngine } from '@alessiofrittoli/media-utils/audio'
+
+// `normalizeAudio` may come from global settings
+const audio  = new Audio( ... )
+const engine = new AudioEngine( audio )
+
+audio.volume = 0
+audio.play()
+  .then( () => {
+    engine.fade( {
+      to: AudioEngine.normalize( 0.5, normalizeAudio ),
+      onEnd() {
+        console.log( audio.volume ) // Outputs: `0.03162277660168379` if `normalizeAudio` is set to `true`, 0.5 otherwise.
+      },
+    } )
+  } )
+```
+
+</details>
+
+---
+
+###### `AudioEngine.denormalize()`
+
+Conditionally denormalize volume using [`AudioEngine.GainToVolume`](#audioenginegaintovolume).
+
+This method acts as a wrapper and has the same API of [`AudioEngine.GainToVolume()`](#audioenginegaintovolume) but it accepts a boolean value
+as second argument that allows you to quickly opt-in/opt-out based on an incoming variable,
+thus there is no need to call `AudioEngine.GainToVolume()` conditionally.
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { AudioEngine } from '@alessiofrittoli/media-utils/audio'
+
+// `normalizeAudio` may come from global settings
+const audio  = new Audio( ... )
+const engine = new AudioEngine( audio )
+
+audio.volume = 0
+audio.play()
+  .then( () => {
+    engine.fade( {
+      to: AudioEngine.normalize( 0.5, normalizeAudio ),
+      onEnd() {
+        console.log(
+          AudioEngine.denormalize( audio.volume, normalizeAudio )
+        )
+      },
+    } )
+  } )
+```
+
+</details>
+
+---
+
 ### Development
 
 #### Install depenendencies

@@ -1,4 +1,4 @@
-import { AudioEngine } from '@/audio-engine/engine'
+import { AudioEngine } from '@/audio/engine'
 
 describe( 'AudioEngine', () => {
 
@@ -99,7 +99,7 @@ describe( 'AudioEngine', () => {
 			)
 
 			const onTick = jest.fn()
-			engine.fadeVolume( { to: 0.8, duration: 100, onTick } )
+			engine.fade( { to: 0.8, duration: 100, onTick } )
 
 			expect( tweenToMock ).toHaveBeenCalledWith( 0.8, expect.objectContaining( {
 				from	: 0.5,
@@ -122,7 +122,7 @@ describe( 'AudioEngine', () => {
 			} )
 
 			const onTick = jest.fn()
-			engine.fadeVolume( { to: 0.8, duration: 100, onTick } )
+			engine.fade( { to: 0.8, duration: 100, onTick } )
 
 			expect( media.volume ).toBeCloseTo( 0.8, 0.9 )
 			expect( onTick ).toHaveBeenCalledWith( expect.any( Number ) )

@@ -1,5 +1,5 @@
-import { getEngine, destroyEngine } from '@/audio-engine'
-import { AudioEngine } from '@/audio-engine/engine'
+import { getEngine, destroyEngine } from '@/audio'
+import { AudioEngine } from '@/audio/engine'
 
 describe( 'AudioEngine', () => {
 

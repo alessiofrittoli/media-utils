@@ -9,11 +9,43 @@ export interface FadeVolumeOptions extends Omit<TweenOptions, 'from' | 'strategy
 	to: number
 }
 
+/**
+ * Manages volume manipulation for HTML media elements.
+ * 
+ * Provides methods for fading volume with customizable tweening, and utilities for converting
+ * between normalized volume values (0.0-1.0) and linear gain values using decibel-based calculations
+ * that better match human perception of audio loudness.
+ * 
+ * @example
+ * ```ts
+ * const audio  = new Audio( ... )
+ * const engine = new AudioEngine( audio )
+ * 
+ * audio.volume = 0
+ * audio.play()
+ *  .then( () => {
+ *    // Fade volume to 0.5 over 2 seconds
+ *    engine.fade( {
+ *      to         : AudioEngine.normalize( 0.5 ),
+ *      duration   : 2000,
+ *    } )
+ *  } )
+ * ```
+ */
 export class AudioEngine
 {
+	/**
+	 * The `HTMLMediaElement` associated with current `AudioEngine`.
+	 * 
+	 */
 	private media: HTMLMediaElement
+	/**
+	 * The `Tween` instance associated with current `AudioEngine`.
+	 * 
+	 */
 	private tween: Tween
 	
+
 	constructor( media: HTMLMediaElement )
 	{
 		this.media	= media
@@ -26,7 +58,7 @@ export class AudioEngine
 	 * 
 	 * @param options An object defining customization and callbacks. See {@link FadeVolumeOptions} for more info.
 	 */
-	fadeVolume( options: FadeVolumeOptions )
+	fade( options: FadeVolumeOptions )
 	{
 		const { onTick, ...rest } = options
 
@@ -77,7 +109,7 @@ export class AudioEngine
 	 *   dB = 20 * log10(gain)
 	 * Then, it normalizes the dB value between a minimum of -60 dB and a maximum of 0 dB.
 	 *
-	 * @param gain The linear gain value to convert. Should be a positive number.
+	 * @param gain The linear gain value to convert.
 	 * @returns The normalized volume value in the range [0, 1].
 	 */
 	static GainToVolume( gain: number )
@@ -102,7 +134,8 @@ export class AudioEngine
 	 * 
 	 * @returns The normalized volume (gain) if `normalize` is set to `true`.
 	 */
-	static normalize( volume: number, normalize: boolean = true ) {
+	static normalize( volume: number, normalize: boolean = true )
+	{
 		return (
 			normalize
 				? AudioEngine.VolumeToGain( volume )
@@ -119,7 +152,8 @@ export class AudioEngine
 	 * 
 	 * @returns The denormalized volume if `normalize` is set to `true`.
 	 */
-	static denormalize( volume: number, normalize: boolean = true ) {
+	static denormalize( volume: number, normalize: boolean = true )
+	{
 		return (
 			normalize
 				? AudioEngine.GainToVolume( volume )
