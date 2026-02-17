@@ -1,25 +1,34 @@
 import { AudioEngine } from './engine'
 export * from '@/audio/engine'
 
-const audioEngines = new WeakMap<HTMLMediaElement, AudioEngine>()
-
 /**
- * Delete the `AudioEngine` associated with the given `media` to free-up memory.
+ * A WeakMap that stores `AudioEngine` instances indexed by an `HTMLMediaElement`.
  * 
- * @param media The HTMLMediaElement.
- * @returns `true` if the element was successfully removed, or `false` if it was not present.
+ * - When a media element is no longer referenced elsewhere, it becomes eligible for garbage collection.
+ * - The associated AudioEngine can be automatically cleaned up.
+ * - Prevents memory leaks without requiring manual bookkeeping
  */
-export const destroyEngine = ( media: HTMLMediaElement ) => (
-	audioEngines.delete( media )
-)
+const engines = new WeakMap<HTMLMediaElement, AudioEngine>()
 
 
 /**
  * Get the `AudioEngine` associated with the given `media`.
+ * If none exists, it lazily creates a new instance.
  * 
  * @param media The HTMLMediaElement.
- * @returns The AudioEngine associated with the given `media` or a new AudioEngine instance if not found.
+ * @returns The `AudioEngine` associated with the given `media` or a new `AudioEngine` instance if none exists.
  */
 export const getEngine = ( media: HTMLMediaElement ): AudioEngine => (
-	audioEngines.get( media ) || audioEngines.set( media, new AudioEngine( media ) ).get( media )!
+	engines.get( media ) || engines.set( media, new AudioEngine( media ) ).get( media )!
+)
+
+
+/**
+ * Proactively delete the `AudioEngine` associated with the given `media` to free resources.
+ * 
+ * @param media The HTMLMediaElement.
+ * @returns `true` if the element was successfully removed, `false` if no engine was registered.
+ */
+export const destroyEngine = ( media: HTMLMediaElement ) => (
+	engines.delete( media )
 )

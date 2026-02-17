@@ -24,6 +24,8 @@
 - [API Reference](#api-reference)
   - [MIME types](#mime-types)
   - [MediaSession](#mediasession)
+  - [AudioEngine](#audioengine)
+    - [Audio Engine Manager](#audio-engine-manager)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
   - [Build the source code](#build-the-source-code)
@@ -415,6 +417,8 @@ Provides methods for fading volume with customizable tweening, and utilities for
 between normalized volume values (0.0-1.0) and linear gain values using decibel-based calculations
 that better match human perception of audio loudness.
 
+- Refer to the [Audio Engine Manager](#audio-engine-manager) section to understand how instance caching prevents redundant `AudioEngine` instantiation.
+
 ##### AudioEngine Types
 
 ###### `TickHandler`
@@ -677,6 +681,119 @@ audio.play()
       },
     } )
   } )
+```
+
+</details>
+
+---
+
+##### Audio Engine Manager
+
+The Audio Engine Manager is responsible for maintaining a one-to-one association between an `HTMLMediaElement` and its corresponding `AudioEngine` instance.
+Its primary goal is to prevent unnecessary re-creation of `AudioEngine` objects when interacting with the same media element.
+
+When working with audio processing APIs, repeatedly instantiating `AudioEngine` for the same HTMLMediaElement would:
+
+- Introduce unnecessary computational overhead.
+- Potentially duplicate internal state.
+- Increase memory usage.
+- Lead to inconsistent behavior.
+
+The manager ensures that each media element has exactly one `AudioEngine` instance.
+
+###### `getEngine()`
+
+Get the `AudioEngine` associated with the given `media`. If none exists, it lazily creates a new instance.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | type               | Decription            |
+| --------- | ------------------ | --------------------- |
+| `media`   | `HTMLMediaElement` | The HTMLMediaElement. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `AudioEngine`.
+
+The `AudioEngine` associated with the given `media` or a new `AudioEngine` instance if none exists.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { getEngine } from "@alessiofrittoli/media-utils/audio";
+
+const mute = (media: HTMLMediaElement) => {
+  getEngine(media).fade({ to: 0 });
+};
+
+const unmute = (media: HTMLMediaElement) => {
+  getEngine(media).fade({ to: 1 });
+};
+```
+
+</details>
+
+---
+
+###### `destroyEngine()`
+
+Proactively delete the `AudioEngine` associated with the given `media` to free resources.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | type               | Decription            |
+| --------- | ------------------ | --------------------- |
+| `media`   | `HTMLMediaElement` | The HTMLMediaElement. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `boolean`.
+
+- `true` if the element was successfully removed.
+- `false` if no engine was registered.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { getEngine, destroyEngine } from "@alessiofrittoli/media-utils/audio";
+
+const stop = (media: HTMLMediaElement) => {
+  getEngine(media).fade({
+    to: 0,
+    onEnd() {
+      media.pause();
+      destroyEngine(media);
+    },
+  });
+};
 ```
 
 </details>
