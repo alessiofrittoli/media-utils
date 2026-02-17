@@ -87,7 +87,7 @@ describe( 'AudioEngine', () => {
 	} )
 
 
-	describe( 'AudioEngine.fadeVolume()', () => {
+	describe( 'AudioEngine.fade()', () => {
 
 		it( 'calls Tween.to with correct parameters', () => {
 

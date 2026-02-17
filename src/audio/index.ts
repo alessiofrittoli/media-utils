@@ -1,5 +1,6 @@
 import { AudioEngine } from './engine'
 export * from '@/audio/engine'
+export * from '@/audio/utils'
 
 /**
  * A WeakMap that stores `AudioEngine` instances indexed by an `HTMLMediaElement`.

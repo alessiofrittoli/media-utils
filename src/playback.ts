@@ -4,8 +4,8 @@ import {
 	type UpdateMediaMetadataAndPositionOptions
 } from '@/media-session'
 
-import type { FadeVolumeOptions } from '@/audio'
 import { fadeVolume } from '@/audio/utils'
+import type { FadeVolumeOptions } from '@/audio'
 
 
 /**

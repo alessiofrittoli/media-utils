@@ -831,6 +831,8 @@ This utility function acts as a wrapper handling [`AudioEngine`](#audioengine) i
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
+import { fadeVolume } from "@alessiofrittoli/media-utils/audio";
+
 const play = (media: HTMLMediaElement) => {
   media.volume = 0;
   media.play().then(() => {
