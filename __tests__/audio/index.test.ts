@@ -1,7 +1,7 @@
 import { getEngine, destroyEngine } from '@/audio'
 import { AudioEngine } from '@/audio/engine'
 
-describe( 'AudioEngine', () => {
+describe( 'Audio Engine Manager', () => {
 
 	describe( 'getEngine', () => {
 
