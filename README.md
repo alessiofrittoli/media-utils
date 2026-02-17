@@ -28,6 +28,7 @@
     - [Audio Engine Manager](#audio-engine-manager)
     - [Audio Utilities](#audio-utilities)
   - [Media Playback](#media-playback)
+  - [Utilities](#utilities)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
   - [Build the source code](#build-the-source-code)
@@ -985,6 +986,68 @@ pause.addEventListener("click", () => {
   pauseMedia( { media, fade: 800 } )
 
 });
+```
+
+</details>
+
+---
+
+#### Utilities
+
+##### `formatMediaTiming()`
+
+Formats a time value in seconds into a human-readable media timing string (M:SS or H:MM:SS).
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter   | Type      | Default | Description                                                  |
+| ----------- | --------- | ------- | ------------------------------------------------------------ |
+| `time`      | `number`  | -       | The time value in seconds to format.                         |
+| `showHours` | `boolean` | `false` | (Optional) Whether to include hours in the formatted output. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `string`
+
+A formatted time string in the format "M:SS" or "H:MM:SS" if `showHours` is `true`.
+If the time is 0 or invalid, returns "0:00".
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { formatMediaTiming } from "@alessiofrittoli/media-utils";
+
+console.log(formatMediaTiming(45)); // Outputs: "0:45"
+console.log(formatMediaTiming(90)); // Outputs: "1:30"
+console.log(formatMediaTiming(125)); // Outputs: "2:05"
+
+console.log(formatMediaTiming(3661, true)); // Outputs: "1:01:01"
+
+console.log(formatMediaTiming(0)); // Outputs: "0:00"
+console.log(formatMediaTiming(-NaN)); // Outputs: "0:00"
+console.log(formatMediaTiming(NaN)); // Outputs: "0:00"
+console.log(formatMediaTiming(-Infinity)); // Outputs: "0:00"
+console.log(formatMediaTiming(Infinity)); // Outputs: "0:00"
+
+console.log(formatMediaTiming(0, true)); // Outputs: "0:00:00"
+console.log(formatMediaTiming(-NaN, true)); // Outputs: "0:00:00"
+console.log(formatMediaTiming(NaN, true)); // Outputs: "0:00:00"
+console.log(formatMediaTiming(-Infinity, true)); // Outputs: "0:00:00"
+console.log(formatMediaTiming(Infinity, true)); // Outputs: "0:00:00"
 ```
 
 </details>
