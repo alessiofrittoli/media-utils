@@ -26,6 +26,7 @@
   - [MediaSession](#mediasession)
   - [AudioEngine](#audioengine)
     - [Audio Engine Manager](#audio-engine-manager)
+    - [Audio Utilities](#audio-utilities)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
   - [Build the source code](#build-the-source-code)
@@ -792,6 +793,44 @@ const stop = (media: HTMLMediaElement) => {
       media.pause();
       destroyEngine(media);
     },
+  });
+};
+```
+
+</details>
+
+---
+
+##### Audio Utilities
+
+###### `fadeVolume()`
+
+Fade media volume.
+
+This utility function acts as a wrapper handling [`AudioEngine`](#audioengine) instances for you using the [Audio Engine Manager](#audio-engine-manager).
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | type                | Decription                                                                                                   |
+| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `media`   | `HTMLMediaElement`  | The HTMLMediaElement.                                                                                        |
+| `options` | `FadeVolumeOptions` | An object defining customization and callbacks. See [`FadeVolumeOptions`](#fadevolumeoptions) for more info. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+const play = (media: HTMLMediaElement) => {
+  media.volume = 0;
+  media.play().then(() => {
+    fadeVolume(media, { to: 1 });
   });
 };
 ```
