@@ -2,7 +2,7 @@ import { padStart } from '@alessiofrittoli/math-utils'
 import { secondsToUnit } from '@alessiofrittoli/date-utils'
 
 /**
- * Formats a time value in seconds into a human-readable media timing string (MM:SS or HH:MM:SS).
+ * Formats a time value in seconds into a human-readable media timing string (M:SS or H:MM:SS).
  * 
  * @param	time		The time value in seconds to format.
  * @param	showHours	(Optional) Whether to include hours in the formatted output. Default: `false`.
@@ -25,6 +25,6 @@ export const formatMediaTiming = ( time: number, showHours = false ) => {
 		showHours && ( units.hours || '0' ),
 		padStart( units.minutes || 0, ! showHours ? 1 : 2 ),
 		padStart( units.seconds || 0, 2 ),
-	].filter( Boolean ).join( ':' ) || '0:00'
+	].filter( Boolean ).join( ':' )
 	
 }

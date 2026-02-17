@@ -6,18 +6,18 @@ describe( 'utils', () => {
 	
 		it( 'formats seconds without hours', () => {
 
-			expect( formatMediaTiming( 125 ) ).toBe( '2:05' )
 			expect( formatMediaTiming( 45 ) ).toBe( '0:45' )
 			expect( formatMediaTiming( 90 ) ).toBe( '1:30' )
+			expect( formatMediaTiming( 125 ) ).toBe( '2:05' )
 
 		} )
 
 	
 		it( 'formats seconds with hours when showHours is true', () => {
 
-			expect( formatMediaTiming( 15600, true ) ).toBe( '4:20:00' )
 			expect( formatMediaTiming( 3661, true ) ).toBe( '1:01:01' )
 			expect( formatMediaTiming( 7200, true ) ).toBe( '2:00:00' )
+			expect( formatMediaTiming( 15600, true ) ).toBe( '4:20:00' )
 
 		} )
 
