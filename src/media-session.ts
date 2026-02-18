@@ -1,5 +1,5 @@
 import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
-import type { MIMEType } from '@/mime'
+import type { MediaType, MIMEType } from '@/mime'
 
 /**
  * The Media Artwork.
@@ -45,10 +45,10 @@ export interface Media extends Partial<Omit<MediaMetadata, 'artwork'>>
 	 */
 	src: UrlInput
 	/**
-	 * The media MIME type.
+	 * The media type.
 	 * 
 	 */
-	type: MIMEType
+	type: MediaType
 	/**
 	 * The title of the media.
 	 * 
