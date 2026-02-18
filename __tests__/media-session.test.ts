@@ -121,7 +121,7 @@ describe( 'MediaSession', () => {
 
 			const data: Media = {
 				src		: 'media.mp3',
-				type	: 'audio/mpeg',
+				type	: 'audio',
 				title	: 'Test Song',
 				artist	: 'Test Artist',
 				album	: 'Test Album',
@@ -152,7 +152,7 @@ describe( 'MediaSession', () => {
 		it( 'handles missing artwork', () => {
 			
 			const data: Media = {
-				type	: 'audio/mpeg',
+				type	: 'audio',
 				title	: 'No Artwork',
 				src		: '',
 			}
@@ -179,7 +179,7 @@ describe( 'MediaSession', () => {
 				value			: undefined,
 			} )
 
-			updateMediaMetadata( { type: 'audio/mpeg' } )
+			updateMediaMetadata( { type: 'audio' } )
 
 			expect( warnSpy ).toHaveBeenCalledWith(
 				"Couldn't update MediaSession metadata. The API is currently unavailable."
@@ -204,7 +204,7 @@ describe( 'MediaSession', () => {
 
 			const data: Media = {
 				src		: 'media.mp3',
-				type	: 'audio/mpeg',
+				type	: 'audio',
 				title	: 'Test Song',
 				artist	: 'Test Artist',
 				album	: 'Test Album',
