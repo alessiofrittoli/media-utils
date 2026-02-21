@@ -24,7 +24,7 @@ export interface MediaArtWork
 	 * - 384
 	 * - 512
 	 */
-	size?: number
+	sizes?: number | number[]
 	/**
 	 * The Media Artwork image MIME type.
 	 * 
@@ -77,6 +77,9 @@ export interface Media extends Partial<Omit<MediaMetadata, 'artwork'>>
 }
 
 
+export type MediaSessionMetadata = Omit<Media, 'src' | 'type'>
+
+
 /**
  * Defines the MediaSession update options.
  * 
@@ -92,7 +95,7 @@ export interface UpdateMediaMetadataAndPositionOptions
 	 * The playing media data.
 	 * 
 	 */
-	data: Omit<Media, 'src'>
+	data: MediaSessionMetadata
 }
 
 
@@ -121,18 +124,31 @@ export const updatePositionState = ( media: HTMLMediaElement ) => {
  * 
  * @param data The playing media data.
  */
-export const updateMediaMetadata = ( data: Omit<Media, 'src'> ) => {
+export const updateMediaMetadata = ( data: MediaSessionMetadata ) => {
 
 	if ( ! navigator.mediaSession || typeof MediaMetadata === 'undefined' ) {
 		return console.warn( 'Couldn\'t update MediaSession metadata. The API is currently unavailable.' )
 	}
-	
+
+	const { title, album, artist, artwork } = data
+
 	navigator.mediaSession.metadata = new MediaMetadata( {
-		...data,
-		artwork	: data.artwork?.map( ( { src, size, ...rest } ) => ( {
-			sizes: [ size, size ].join( 'x' ),
-			...rest, src: Url.format( src ),
-		} ) ),
+		title, album, artist,
+		artwork	: artwork?.map( ( { src, type, sizes: inputSizes = [] } ) => {
+
+			const sizes = (
+				Array.isArray( inputSizes )
+					? [ inputSizes.at( 0 ) || inputSizes.at( 1 ), inputSizes.at( 1 ) || inputSizes.at( 0 ) ]
+					: [ inputSizes, inputSizes ]
+			)
+			.filter( n => typeof n === 'number' && ! isNaN( n ) )
+			.join( 'x' )
+
+			return {
+				sizes, src: Url.format( src ), type
+			}
+
+		} ),
 	} )
 
 }
