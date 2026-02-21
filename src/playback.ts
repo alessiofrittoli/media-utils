@@ -5,7 +5,7 @@ import {
 } from '@/media-session'
 
 import { fadeVolume } from '@/audio/utils'
-import type { FadeVolumeOptions } from '@/audio'
+import { AudioEngine, type FadeVolumeOptions } from '@/audio'
 
 
 /**
@@ -52,7 +52,8 @@ export const playMedia = ( options: PlayMediaOptions ) => {
 		easing = Easing.easeOutSine, onError, ...rest
 	} = options
 
-	media.volume = 0
+	// use `AudioEngine.minVolume` to ensure browser `MediaSession` keeps running.
+	media.volume = AudioEngine.MinVolume
 
 	return (
 		media.play()
@@ -88,7 +89,8 @@ export const pauseMedia = ( options: PauseMediaOptions ) => {
 	} = options
 
 	fadeVolume( media, {
-		to		: 0,
+		// use `AudioEngine.minVolume` to ensure browser `MediaSession` keeps running.
+		to: AudioEngine.MinVolume,
 		duration: fade,
 		easing,
 		...rest,
