@@ -44,6 +44,11 @@ export class AudioEngine
 	 * 
 	 */
 	private tween: Tween
+	/**
+	 * Defines a minimum volume value to avoid browser `MediaSession` disruption.
+	 * 
+	 */
+	static MinVolume = 0.000000000001
 	
 
 	constructor( media: HTMLMediaElement )
@@ -67,7 +72,7 @@ export class AudioEngine
 			from	: this.media.volume,
 			strategy: 'timer',
 			onTick	: value => {
-				const safeValue		= clamp( Math.abs( value ), 0, 1 )
+				const safeValue		= clamp( Math.abs( value ), AudioEngine.MinVolume, 1 )
 				this.media.volume	= safeValue
 				onTick?.( safeValue )
 			},

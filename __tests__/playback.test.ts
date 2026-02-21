@@ -2,6 +2,7 @@ import { Easing } from '@alessiofrittoli/math-utils'
 import { updateMediaMetadataAndPosition } from '@/media-session'
 import { fadeVolume as _fadeVolume } from '@/audio/utils'
 import { playMedia, pauseMedia, type PlayMediaOptions } from '@/playback'
+import { AudioEngine } from '@/audio'
 
 
 jest.mock( '@/media-session' )
@@ -26,7 +27,7 @@ describe( 'playback', () => {
 	const playMediaOptions: PlayMediaOptions = {
 		volume	: 0.8,
 		data	: { type: 'audio/aac' },
-	} as PlayMediaOptions
+	} as unknown as PlayMediaOptions
 
 	const mockMedia: MockMedia = {
 		volume	: 1,
@@ -57,10 +58,10 @@ describe( 'playback', () => {
 
 	describe( 'playMedia', () => {
 
-		it( 'set volume to 0 before playing', () => {
+		it( 'set volume to AudioEngine.MinVolume before playing', () => {
 
 			playMedia( playMediaOptions )
-			expect( mockMedia.volume ).toBe( 0 )
+			expect( mockMedia.volume ).toBe( AudioEngine.MinVolume )
 
 		} )
 
@@ -158,12 +159,12 @@ describe( 'playback', () => {
 
 	describe( 'pauseMedia', () => {
 
-		it( 'fades volume to 0', () => {
+		it( 'fades volume to AudioEngine.MinVolume', () => {
 
 			pauseMedia( { ...playMediaOptions, fade: 1000 } )
 			
 			expect( fadeVolume ).toHaveBeenCalledWith( mockMedia, expect.objectContaining( {
-				to			: 0,
+				to			: AudioEngine.MinVolume,
 				duration	: 1000,
 			} ) )
 

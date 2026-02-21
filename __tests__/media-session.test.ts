@@ -153,6 +153,7 @@ describe( 'MediaSession', () => {
 
 			const data: MediaSessionMetadata = {
 				artwork	: [
+					{ src: '/art.png', type: 'image/png' },
 					{ src: '/art.png', sizes: 96, type: 'image/png' },
 					{ src: '/art.png', sizes: [ 128 ], type: 'image/png' },
 					// @ts-expect-error negative testing
@@ -170,6 +171,7 @@ describe( 'MediaSession', () => {
 				album	: data.album,
 				artist	: data.artist,
 				artwork: [
+					{ sizes: '', type: 'image/png', src: '/art.png' },
 					{ sizes: '96x96', type: 'image/png', src: '/art.png' },
 					{ sizes: '128x128', type: 'image/png', src: '/art.png' },
 					{ sizes: '192x192', type: 'image/png', src: '/art.png' },
