@@ -6,7 +6,7 @@ import {
 	updatePositionState,
 	updateMediaMetadata,
 	updateMediaMetadataAndPosition,
-	Media,
+	type MediaSessionMetadata,
 } from '@/media-session'
 
 
@@ -119,22 +119,22 @@ describe( 'MediaSession', () => {
 
 		it( 'sets mediaSession.metadata with formatted artwork data', () => {
 
-			const data: Media = {
-				src		: 'media.mp3',
-				type	: 'audio',
+			const data: MediaSessionMetadata = {
 				title	: 'Test Song',
 				artist	: 'Test Artist',
 				album	: 'Test Album',
 				artwork	: [
-					{ src: { hostname: 'example.com', pathname: 'art.png' }, size: 128, type: 'image/png' },
+					{ src: { hostname: 'example.com', pathname: 'art.png' }, sizes: 128, type: 'image/png' },
 				],
 			}
 
 			updateMediaMetadata( data )
 
 			const formatted = {
-				...data,
-				artwork: [
+				title	: data.title,
+				album	: data.album,
+				artist	: data.artist,
+				artwork	: [
 					{
 						sizes	: '128x128',
 						type	: 'image/png',
@@ -147,21 +147,57 @@ describe( 'MediaSession', () => {
 			expect( navigator.mediaSession.metadata ).toEqual( formatted )
 
 		} )
+		
+		
+		it( 'correctly handles artwork sizes', () => {
+
+			const data: MediaSessionMetadata = {
+				artwork	: [
+					{ src: '/art.png', sizes: 96, type: 'image/png' },
+					{ src: '/art.png', sizes: [ 128 ], type: 'image/png' },
+					// @ts-expect-error negative testing
+					{ src: '/art.png', sizes: [ undefined, 192 ], type: 'image/png' },
+					{ src: '/art.png', sizes: [ NaN, 256 ], type: 'image/png' },
+					{ src: '/art.png', sizes: [ 384, NaN ], type: 'image/png' },
+					{ src: '/art.png', sizes: [ 512, 288 ], type: 'image/png' },
+				],
+			}
+			
+			updateMediaMetadata( data )
+			
+			const formatted = {
+				title	: data.title,
+				album	: data.album,
+				artist	: data.artist,
+				artwork: [
+					{ sizes: '96x96', type: 'image/png', src: '/art.png' },
+					{ sizes: '128x128', type: 'image/png', src: '/art.png' },
+					{ sizes: '192x192', type: 'image/png', src: '/art.png' },
+					{ sizes: '256x256', type: 'image/png', src: '/art.png' },
+					{ sizes: '384x384', type: 'image/png', src: '/art.png' },
+					{ sizes: '512x288', type: 'image/png', src: '/art.png' },
+				],
+			}
+
+			expect( window.MediaMetadata ).toHaveBeenCalledWith( formatted )
+			expect( navigator.mediaSession.metadata ).toEqual( formatted )
+
+		} )
 
 
 		it( 'handles missing artwork', () => {
 			
-			const data: Media = {
-				type	: 'audio',
-				title	: 'No Artwork',
-				src		: '',
+			const data: MediaSessionMetadata = {
+				title: 'No Artwork',
 			}
 
 			updateMediaMetadata( data )
 
 			expect( window.MediaMetadata ).toHaveBeenCalledWith( {
-				...data,
-				artwork: undefined,
+				title	: data.title,
+				album	: data.album,
+				artist	: data.artist,
+				artwork	: undefined,
 			} )
 
 		} )
@@ -179,7 +215,7 @@ describe( 'MediaSession', () => {
 				value			: undefined,
 			} )
 
-			updateMediaMetadata( { type: 'audio' } )
+			updateMediaMetadata( {} )
 
 			expect( warnSpy ).toHaveBeenCalledWith(
 				"Couldn't update MediaSession metadata. The API is currently unavailable."
@@ -202,14 +238,12 @@ describe( 'MediaSession', () => {
 				currentTime		: 30,
 			} as HTMLMediaElement
 
-			const data: Media = {
-				src		: 'media.mp3',
-				type	: 'audio',
+			const data: MediaSessionMetadata = {
 				title	: 'Test Song',
 				artist	: 'Test Artist',
 				album	: 'Test Album',
 				artwork	: [
-					{ src: { hostname: 'example.com', pathname: 'art.png' }, size: 128, type: 'image/png' },
+					{ src: { hostname: 'example.com', pathname: 'art.png' }, sizes: 128, type: 'image/png' },
 				],
 			}
 
@@ -222,7 +256,9 @@ describe( 'MediaSession', () => {
 			} )
 
 			const formatted = {
-				...data,
+				title	: data.title,
+				album	: data.album,
+				artist	: data.artist,
 				artwork: [
 					{
 						sizes	: '128x128',
