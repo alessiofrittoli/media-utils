@@ -60,6 +60,11 @@ export interface Media extends Partial<Omit<MediaMetadata, 'artwork'>>
 	 */
 	artwork?: MediaArtWork[] | readonly MediaArtWork[]
 	/**
+	 * The media video artwork.
+	 * 
+	 */
+	videoArtwork?: MediaArtWork[] | readonly MediaArtWork[]
+	/**
 	 * The artist of the media.
 	 * 
 	 */
