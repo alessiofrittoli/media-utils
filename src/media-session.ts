@@ -24,7 +24,7 @@ export interface MediaArtWork
 	 * - 384
 	 * - 512
 	 */
-	sizes?: number | number[]
+	sizes?: number | [ number ] | [ number, number ]
 	/**
 	 * The Media Artwork image MIME type.
 	 * 
