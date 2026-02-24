@@ -2,6 +2,9 @@ import { Exception } from '@alessiofrittoli/exception'
 import { ErrorCode } from '@alessiofrittoli/exception/code'
 import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
 
+export const BLACK_BASE64_DATA_URI_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+AkAAP8A+7Xdu1sAAAAASUVORK5CYII='
+
+
 /**
  * Creates and returns an HTML image element with a fallback source.
  * 
@@ -19,7 +22,7 @@ import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
  * ```
  */
 export const getFallbackImage = (
-	src: UrlInput = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+AkAAP8A+7Xdu1sAAAAASUVORK5CYII='
+	src: UrlInput = BLACK_BASE64_DATA_URI_IMAGE
 ) => {
 
 	const image = document.createElement( 'img' )
@@ -114,7 +117,7 @@ export const createImageVideoStream = async (
 	} = options
 
 	let source		= media
-	const canvas	= options.canvas || document.createElement( 'canvas' )	
+	const canvas	= options.canvas || document.createElement( 'canvas' )
 	const context	= options.context || ( canvas.getContext && canvas.getContext( '2d' ) )
 
 	if ( ! context ) {
@@ -158,6 +161,21 @@ export const createImageVideoStream = async (
 		}
 
 
+		/**
+		 * Compute scaling factor to emulate CSS `object-fit` behavior.
+		 *
+		 * - `contain` uses the smaller ratio to ensure the entire image fits
+		 *   inside the canvas (may result in empty space).
+		 * - `cover` uses the larger ratio to fully cover the canvas,
+		 *   possibly cropping the image.
+		 *
+		 * When `aspectRatio` is not provided, the canvas matches the image
+		 * dimensions and `scale` is 1.
+		 *
+		 * This logic is independent from how the canvas size is determined,
+		 * allowing future support for externally defined canvas dimensions
+		 * without changing the scaling algorithm.
+		 */
 		const scale = (
 			( fit === 'cover' ? Math.max : Math.min )( canvas.width / bitmap.width, canvas.height / bitmap.height )
 		)
@@ -181,7 +199,7 @@ export const createImageVideoStream = async (
 
 		return { video, canvas, context, stream, destroy }
 	}
-
+	
 	if ( source instanceof HTMLImageElement ) {
 		const image = source
 		await new Promise<void>( resolve => {
