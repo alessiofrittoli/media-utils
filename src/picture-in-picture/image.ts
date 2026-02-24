@@ -1,43 +1,19 @@
 import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
-import { Exception } from '@alessiofrittoli/exception'
 import { fetch } from '@alessiofrittoli/fetcher/fetch'
 import {
 	createImageVideoStream, getFallbackImage,
 	type CreateImageVideoStream, type CreateImageVideoStreamOptions
 } from '@/image'
-import { ErrorCode } from '@/errors'
+import {
+	requiresPictureInPictureAPI,
+	type OpenPictureInPictureCommonOptions
+} from '@/picture-in-picture'
 
 
 /**
- * Checks if the Picture-in-Picture API is supported by the current browser.
+ * Defines configuration options for opening the image in Picture-in-Picture mode.
  * 
- * @returns `true` if Picture-in-Picture is enabled and supported, `false` otherwise.
  */
-export const isPictureInPictureSupported = () => !! document.pictureInPictureEnabled
-
-
-/**
- * Validates that the Picture-in-Picture API is supported in the current browser.
- * 
- * @throws {Exception} Throws a new Exception if the Picture-in-Picture API is not supported.
- */
-export const requiresPictureInPictureAPI = () => {
-	if ( ! isPictureInPictureSupported() ) {
-		throw new Exception( 'The Picture-in-Picture API is not supported in the current browser.', { code: ErrorCode.PIP_NOT_SUPPORTED } )
-	}
-}
-
-
-export interface OpenPictureInPictureCommonOptions
-{
-	/**
-	 * A callback to execute when Picture-in-Picture window is closed.
-	 * 
-	 */
-	onQuit?: () => void
-}
-
-
 export interface OpenImagePictureInPictureOptions extends OpenPictureInPictureCommonOptions, Omit<CreateImageVideoStreamOptions, 'media'>
 {
 	/**

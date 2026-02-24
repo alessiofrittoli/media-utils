@@ -12,15 +12,15 @@ import {
 	type CreateImageVideoStream,
 	type CreateImageVideoStreamOptions,
 } from '@/image'
-import {
-	isPictureInPictureSupported,
-	requiresPictureInPictureAPI,
-	openImagePictureInPicture,
-} from '@/picture-in-picture/image-picture-in-picture'
+import { openImagePictureInPicture } from '@/picture-in-picture/image'
 
 jest.mock( '@alessiofrittoli/fetcher/fetch' )
 const fetch = _fetch as jest.Mock<ReturnType<typeof _fetch>, Parameters<typeof _fetch>>
 
+
+jest.mock( '@/picture-in-picture', () => ( {
+	requiresPictureInPictureAPI: jest.fn()
+} ) )
 
 jest.mock( '@/image', () => ( {
 	...jest.requireActual( '@/image' ),
@@ -34,64 +34,8 @@ const createImageVideoStream = (
 
 describe( 'Image Picture-in-Picture', () => {
 
-	const originalpPctureInPictureEnabled = document.pictureInPictureEnabled
-	let mockPictureInPictureEnabled: jest.Mock
-
-	beforeEach( () => {
-
-		mockPictureInPictureEnabled = jest.fn( () => true )
-
-		Object.defineProperty( document, 'pictureInPictureEnabled', {
-			configurable: true,
-			get			: mockPictureInPictureEnabled,
-		} )
-
-	} )
-
-
 	afterEach( () => {
 		jest.clearAllMocks()
-		mockPictureInPictureEnabled.mockImplementation( () => originalpPctureInPictureEnabled )
-	} )
-
-
-	describe( 'isPictureInPictureSupported', () => {
-		
-		it( 'returns true if Picture-in-Picture API is available', () => {
-
-			expect( isPictureInPictureSupported() ).toBe( true )
-
-		} )
-
-
-		it( 'returns false if Picture-in-Picture API is not available', () => {
-
-			mockPictureInPictureEnabled.mockReturnValue( false )
-			expect( isPictureInPictureSupported() ).toBe( false )
-
-		} )
-
-	} )
-	
-	
-	describe( 'requiresPictureInPictureAPI', () => {
-		
-		it( 'throws an Exception if Picture-in-Picture is not supported', () => {
-
-			mockPictureInPictureEnabled.mockReturnValue( false )
-			
-			expect( requiresPictureInPictureAPI )
-				.toThrow( expect.objectContaining( { code: ErrorCode.PIP_NOT_SUPPORTED } ) )
-
-		} )
-
-
-		it( 'doesn\'t throw any Exception if Picture-in-Picture is supported', () => {
-
-			expect( requiresPictureInPictureAPI ).not.toThrow()
-
-		} )
-
 	} )
 
 
@@ -220,16 +164,16 @@ describe( 'Image Picture-in-Picture', () => {
 			
 			// this test depends on `document.pictureInPictureElement` which doesn't get updated in jest-jsdom environment
 			Object.defineProperty( document, 'pictureInPictureElement', {
-				configurable: true,
-				value: mockVideo,
+				configurable	: true,
+				value			: mockVideo,
 			} )
 			
 			await openImagePictureInPicture( { media: media2, ...result } )
 			expect( mockVideo.requestPictureInPicture ).toHaveBeenCalledTimes( 1 )
 			
 			Object.defineProperty( document, 'pictureInPictureElement', {
-				configurable: true,
-				value: undefined,
+				configurable	: true,
+				value			: undefined,
 			} )
 
 		} )
