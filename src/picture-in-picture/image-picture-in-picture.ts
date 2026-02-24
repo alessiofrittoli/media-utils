@@ -28,7 +28,7 @@ export const requiresPictureInPictureAPI = () => {
 }
 
 
-interface OpenPictureInPictureCommonOptions
+export interface OpenPictureInPictureCommonOptions
 {
 	/**
 	 * A callback to execute when Picture-in-Picture window is closed.
