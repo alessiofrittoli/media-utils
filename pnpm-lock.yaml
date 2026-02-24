@@ -14,6 +14,9 @@ importers:
       '@alessiofrittoli/exception':
         specifier: ^3.5.0
         version: 3.5.0
+      '@alessiofrittoli/fetcher':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@alessiofrittoli/math-utils':
         specifier: 2.0.0-alpha.2
         version: 2.0.0-alpha.2
@@ -95,6 +98,9 @@ packages:
 
   '@alessiofrittoli/exception@3.5.0':
     resolution: {integrity: sha512-8WGEiJCr9zFgPzXvTl5Sgh+e1bBldGfMma4EGIa+yLeHpgmsS+zQ8d7woh2YU/yN65DoKGHPKTArWLAvnEwANg==}
+
+  '@alessiofrittoli/fetcher@1.1.0':
+    resolution: {integrity: sha512-JidJxeL8AMm6k2g6AcG368nQmqskh7Hz7CfYnJEBg+BP03MuQQ0MBQpgXCLeyTFkGdtlrY6sMOBP6vk3xG/q+g==}
 
   '@alessiofrittoli/math-utils@1.18.0':
     resolution: {integrity: sha512-dXy9dDk8QpDAbbxAsmHqBG8XqcQr5JG+iTyCjzg1FIADo40PLEqjsSzy3WmLr7P62amahjkFRWDLRLQsTQHpnQ==}
@@ -2681,6 +2687,17 @@ snapshots:
   '@alessiofrittoli/event-emitter@1.6.0': {}
 
   '@alessiofrittoli/exception@3.5.0': {}
+
+  '@alessiofrittoli/fetcher@1.1.0':
+    dependencies:
+      '@alessiofrittoli/abort-controller': 0.1.0
+      '@alessiofrittoli/chain-functions': 2.5.0
+      '@alessiofrittoli/event-emitter': 1.6.0
+      '@alessiofrittoli/exception': 3.5.0
+      '@alessiofrittoli/node-scripts': 3.3.0
+      '@alessiofrittoli/type-utils': 1.9.0
+      '@alessiofrittoli/url-utils': 3.7.1
+      '@alessiofrittoli/web-utils': 1.20.0
 
   '@alessiofrittoli/math-utils@1.18.0':
     dependencies:
