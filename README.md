@@ -6,8 +6,8 @@
 
 [version-badge]: https://img.shields.io/npm/v/%40alessiofrittoli%2Fmedia-utils
 [npm-url]: https://npmjs.org/package/%40alessiofrittoli%2Fmedia-utils
-[coverage-badge]: https://coveralls.io/repos/github/alessiofrittoli/media-utils/badge.svg
-[coverage-url]: https://coveralls.io/github/alessiofrittoli/media-utils
+[coverage-badge]: https://coveralls.io/repos/github/alessiofrittoli/media-utils/badge.svg?branch=releases/alpha
+[coverage-url]: https://coveralls.io/github/alessiofrittoli/media-utils?branch=releases/alpha
 [socket-badge]: https://socket.dev/api/badge/npm/package/@alessiofrittoli/media-utils
 [socket-url]: https://socket.dev/npm/package/@alessiofrittoli/media-utils/overview
 [downloads-badge]: https://img.shields.io/npm/dm/%40alessiofrittoli%2Fmedia-utils.svg

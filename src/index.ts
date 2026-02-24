@@ -1,5 +1,4 @@
 export * from '@/errors'
-export * from '@/picture-in-picture/image-picture-in-picture'
 export * from '@/image'
 export * from '@/media-session'
 export * from '@/mime'
