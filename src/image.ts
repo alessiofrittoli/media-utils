@@ -1,6 +1,6 @@
 import { Exception } from '@alessiofrittoli/exception'
-import { ErrorCode } from '@alessiofrittoli/exception/code'
 import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
+import { ErrorCode } from './errors'
 
 export const BLACK_BASE64_DATA_URI_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+AkAAP8A+7Xdu1sAAAAASUVORK5CYII='
 
@@ -121,7 +121,11 @@ export const createImageVideoStream = async (
 	const context	= options.context || ( canvas.getContext && canvas.getContext( '2d' ) )
 
 	if ( ! context ) {
-		throw new Exception( 'No 2d context available for rendering.', { code: ErrorCode.NOT_FOUND } )
+		throw new Exception(
+			'No 2d context available for rendering.', {
+				code: ErrorCode.RENDERING_CONTEXT_UNAVAILABLE
+			}
+		)
 	}
 
 	const render = async () => {
