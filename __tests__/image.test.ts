@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { ErrorCode } from '@/errors'
 import { createImageVideoStream, getFallbackImage, BLACK_BASE64_DATA_URI_IMAGE } from '@/image'
 
 describe( 'image', () => {
@@ -157,7 +158,7 @@ describe( 'image', () => {
 			delete mockCanvas.getContext
 
 			expect( () => createImageVideoStream( { media: new Blob( [], { type: 'image/png' } ) } ) )
-				.rejects.toThrow( 'No 2d context available for rendering.' )
+				.rejects.toThrow( expect.objectContaining( { code: ErrorCode.RENDERING_CONTEXT_UNAVAILABLE } ) )
 
 		} )
 
