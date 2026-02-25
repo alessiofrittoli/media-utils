@@ -89,12 +89,12 @@ export type OpenArtworkPictureInPicture = (
  * 	See {@link OpenArtworkPictureInPicture} for more info.
  */
 export const openArtworkPictureInPicture = (
-	options: OpenArtworkPictureInPictureOptions
+	options: OpenArtworkPictureInPictureOptions = {}
 ): Promise<OpenArtworkPictureInPicture> => {
 
 	requiresPictureInPictureAPI()
 
-	const fallbackArtwork = navigator.mediaSession.metadata?.artwork.at( -1 )
+	const fallbackArtwork = navigator.mediaSession?.metadata?.artwork.at( -1 )
 
 	const {
 		media: rawArtwork, ...rest
@@ -102,7 +102,6 @@ export const openArtworkPictureInPicture = (
 
 	const isImage	= rawArtwork instanceof HTMLImageElement || rawArtwork instanceof Blob
 	const isVideo	= rawArtwork instanceof HTMLVideoElement
-	const isUrl		= ! isImage && ! isVideo
 
 	if ( isImage ) {
 		return openImagePictureInPicture( { media: rawArtwork, ...rest } )
@@ -112,7 +111,7 @@ export const openArtworkPictureInPicture = (
 		return openVideoArtworkPictureInPicture( { media: rawArtwork, ...rest } )
 	}
 
-	const artworkUrlObj	= isUrl ? ( rawArtwork || fallbackArtwork ) : undefined
+	const artworkUrlObj	= rawArtwork || fallbackArtwork
 	const artworkUrl	= artworkUrlObj ? Url.format( artworkUrlObj?.src ) : undefined
 
 	
@@ -124,10 +123,10 @@ export const openArtworkPictureInPicture = (
 		)
 	}
 
-	if ( artworkUrlObj.type?.includes( 'image' ) ) {	
-		return openImagePictureInPicture( { media: artworkUrl, ...rest } )
+	if ( artworkUrlObj.type?.includes( 'video' ) ) {	
+		return openVideoArtworkPictureInPicture( { media: artworkUrl, ...rest } )
 	}
 	
-	return openVideoArtworkPictureInPicture( { media: artworkUrl, ...rest } )
+	return openImagePictureInPicture( { media: artworkUrl, ...rest } )
 
 }
