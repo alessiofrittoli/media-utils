@@ -6,13 +6,13 @@ import {
 
 
 /**
- * Defines configuration options for opening the video in Picture-in-Picture mode.
+ * Defines configuration options for opening the video in Picture-in-Picture window.
  * 
  */
 export interface OpenVideoArtworkPictureInPictureOptions extends OpenPictureInPictureCommonOptions, Partial<OpenVideoArtworkPictureInPicture>
 {
 	/**
-	 * The media open in a Picture-in-Picture.
+	 * The media to open in a Picture-in-Picture window.
 	 * 
 	 */
 	media: HTMLVideoElement | UrlInput
@@ -20,7 +20,7 @@ export interface OpenVideoArtworkPictureInPictureOptions extends OpenPictureInPi
 
 
 /**
- * Defines the returned result of opening a video into a Picture-in-Picture.
+ * Defines the returned result of opening a video into a Picture-in-Picture window.
  * 
  */
 export interface OpenVideoArtworkPictureInPicture
@@ -34,7 +34,7 @@ export interface OpenVideoArtworkPictureInPicture
 
 
 /**
- * Opens a video artwork element in Picture-in-Picture mode.
+ * Opens a video artwork element in Picture-in-Picture window.
  * 
  * This function is intended for rendering a short song artwork video.
  * This is not suitable if your're looking for a proper video Picture-in-Picture since it simple as calling `video.requestPictureInPicture()`.
@@ -47,6 +47,7 @@ export interface OpenVideoArtworkPictureInPicture
  * @param options Configuration options for opening the video in Picture-in-Picture. See {@link OpenVideoArtworkPictureInPictureOptions} for more info.
  * 
  * @returns A new Promise that resolves with an object containing the video element displayed in Picture-in-Picture mode.
+ * 	See {@link OpenVideoArtworkPictureInPicture} for more info.
  * 
  * @throws Will throw if the Picture-in-Picture API is not available in the browser
  * 

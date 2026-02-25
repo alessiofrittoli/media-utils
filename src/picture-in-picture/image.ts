@@ -17,7 +17,7 @@ import {
 export interface OpenImagePictureInPictureOptions extends OpenPictureInPictureCommonOptions, Omit<CreateImageVideoStreamOptions, 'media'>
 {
 	/**
-	 * The media to render.
+	 * The media to render in a Picture-in-Picture window.
 	 * 
 	 */
 	media: CreateImageVideoStreamOptions[ 'media' ] | UrlInput
@@ -25,18 +25,20 @@ export interface OpenImagePictureInPictureOptions extends OpenPictureInPictureCo
 
 
 /**
- * Defines the returned result of opening a rendered image into a video Picture-in-Picture.
+ * Defines the returned result of opening a rendered image into a video Picture-in-Picture window.
  * 
  */
 export type OpenImagePictureInPicture = CreateImageVideoStream
 
 
 /**
- * Opens an image in Picture-in-Picture mode.
+ * Opens an image in Picture-in-Picture window.
  * 
- * @param options Configuration options for opening the image in PiP mode. See {@link OpenImagePictureInPictureOptions} for more info.
+ * @param options Configuration options for opening the image in PiP window.
+ * 	See {@link OpenImagePictureInPictureOptions} for more info.
  * 
  * @returns A new Promise that resolves to the Picture-in-Picture result containing the video element and destroy function.
+ * 	See {@link OpenImagePictureInPicture} for more info.
  */
 export const openImagePictureInPicture = async (
 	options: OpenImagePictureInPictureOptions
