@@ -1,4 +1,4 @@
-import { Easing } from '@alessiofrittoli/math-utils'
+import { easing } from '@alessiofrittoli/math-utils'
 import { updateMediaMetadataAndPosition } from '@/media-session'
 import { fadeVolume as _fadeVolume } from '@/audio/utils'
 import { playMedia, pauseMedia, type PlayMediaOptions } from '@/playback'
@@ -93,7 +93,7 @@ describe( 'playback', () => {
 			expect( fadeVolume ).toHaveBeenCalledWith( mockMedia, expect.objectContaining( {
 				to		: 0.8,
 				duration: 1000,
-				easing	: Easing.easeOutSine,
+				easing	: easing.easeOutSine,
 			} ) )
 
 		} )
@@ -101,10 +101,10 @@ describe( 'playback', () => {
 
 		it( 'uses custom easing if provided', async () => {
 
-			await playMedia( { ...playMediaOptions, easing: Easing.linear } )
+			await playMedia( { ...playMediaOptions, easing: easing.linear } )
 			
 			expect( fadeVolume ).toHaveBeenCalledWith( mockMedia, expect.objectContaining( {
-				easing: Easing.linear,
+				easing: easing.linear,
 			} ) )
 
 		} )
@@ -117,7 +117,7 @@ describe( 'playback', () => {
 			
 			mockMedia.play.mockRejectedValue( new Error( 'Play failed' ) )
 			
-			await playMedia( { ...playMediaOptions, easing: Easing.linear, onError } )
+			await playMedia( { ...playMediaOptions, easing: easing.linear, onError } )
 			
 			expect( onError ).toHaveBeenCalledWith( mockError )
 			expect( media.volume ).toBe( 1 )
@@ -199,10 +199,10 @@ describe( 'playback', () => {
 
 		it( 'uses custom easing if provided', async () => {
 
-			pauseMedia( { ...playMediaOptions, easing: Easing.linear } )
+			pauseMedia( { ...playMediaOptions, easing: easing.linear } )
 			
 			expect( fadeVolume ).toHaveBeenCalledWith( mockMedia, expect.objectContaining( {
-				easing: Easing.linear,
+				easing: easing.linear,
 			} ) )
 
 		} )
