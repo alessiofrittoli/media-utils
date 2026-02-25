@@ -1,4 +1,4 @@
-import { Easing } from '@alessiofrittoli/math-utils'
+import { easing as ease } from '@alessiofrittoli/math-utils'
 import {
 	updateMediaMetadataAndPosition,
 	type UpdateMediaMetadataAndPositionOptions
@@ -49,7 +49,7 @@ export type PauseMediaOptions = Omit<PlayMediaOptions, 'data' | 'volume' | 'onEr
 export const playMedia = ( options: PlayMediaOptions ) => {
 	const {
 		media, data, volume, fade,
-		easing = Easing.easeOutSine, onError, ...rest
+		easing = ease.easeOutSine, onError, ...rest
 	} = options
 
 	// use `AudioEngine.minVolume` to ensure browser `MediaSession` keeps running.
@@ -85,7 +85,7 @@ export const playMedia = ( options: PlayMediaOptions ) => {
 export const pauseMedia = ( options: PauseMediaOptions ) => {
 	
 	const {
-		media, fade, easing = Easing.easeOutSine, onEnd, ...rest
+		media, fade, easing = ease.easeOutSine, onEnd, ...rest
 	} = options
 
 	fadeVolume( media, {

@@ -18,8 +18,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       '@alessiofrittoli/math-utils':
-        specifier: 2.0.0-alpha.2
-        version: 2.0.0-alpha.2
+        specifier: 2.0.0
+        version: 2.0.0
       '@alessiofrittoli/url-utils':
         specifier: ^3.7.1
         version: 3.7.1
@@ -105,8 +105,8 @@ packages:
   '@alessiofrittoli/math-utils@1.18.0':
     resolution: {integrity: sha512-dXy9dDk8QpDAbbxAsmHqBG8XqcQr5JG+iTyCjzg1FIADo40PLEqjsSzy3WmLr7P62amahjkFRWDLRLQsTQHpnQ==}
 
-  '@alessiofrittoli/math-utils@2.0.0-alpha.2':
-    resolution: {integrity: sha512-WHNBRR6mH3N/O9T2t6HgYYWkBYhE25YhkucHA0lPj7NLOtMjBMx9stSWtilJe/WWJPefVOOVtj3qjqtGTkGPGg==}
+  '@alessiofrittoli/math-utils@2.0.0':
+    resolution: {integrity: sha512-kNK5+q/eXjh0GhF30H3ipZ228fM4VpMaI/4OIjudU0CdDrNGj/5xGHfwH3FWP0AalGnHC7X7+zHsMYduyQr4Ig==}
 
   '@alessiofrittoli/node-scripts@3.2.0':
     resolution: {integrity: sha512-2hjjsUpaNFUQsVIZR0AOkYPMPAuFtgr1zQDDLJucqGXljLy4fVXViLFiVioXg6RwJgOVs/HDjAmqf7WZuah5tQ==}
@@ -2703,7 +2703,7 @@ snapshots:
     dependencies:
       '@alessiofrittoli/web-utils': 1.20.0
 
-  '@alessiofrittoli/math-utils@2.0.0-alpha.2':
+  '@alessiofrittoli/math-utils@2.0.0':
     dependencies:
       '@alessiofrittoli/web-utils': 1.20.0
 
