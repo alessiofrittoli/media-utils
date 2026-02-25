@@ -58,7 +58,7 @@ describe( 'Picture-in-Picture', () => {
 		
 		it( 'returns true if Picture-in-Picture API is available', () => {
 
-			expect( isPictureInPictureSupported() ).toBe( false )
+			expect( isPictureInPictureSupported() ).toBe( true )
 
 		} )
 
@@ -103,7 +103,7 @@ describe( 'Picture-in-Picture', () => {
 
 		} )
 
-
+		
 		describe( 'Image Artwork', () => {
 
 			it( 'calls openImagePictureInPicture if HTMLImageElement is given', async () => {
