@@ -35,7 +35,7 @@ describe( 'Picture-in-Picture', () => {
 		
 		it( 'returns true if Picture-in-Picture API is available', () => {
 
-			expect( isPictureInPictureSupported() ).toBe( false )
+			expect( isPictureInPictureSupported() ).toBe( true )
 
 		} )
 
