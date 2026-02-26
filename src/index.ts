@@ -1,1 +1,6 @@
+export * from '@/errors'
+export * from '@/image'
+export * from '@/media-session'
 export * from '@/mime'
+export * from '@/playback'
+export * from '@/utils'

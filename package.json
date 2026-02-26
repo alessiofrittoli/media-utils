@@ -1,6 +1,6 @@
 {
 	"name": "@alessiofrittoli/media-utils",
-	"version": "0.1.0",
+	"version": "1.0.0-alpha.16",
 	"description": "TypeScript media utility library",
 	"author": {
 		"name": "Alessio Frittoli",
@@ -45,14 +45,14 @@
 				"default": "./dist/index.js"
 			}
 		},
-		"./mime": {
+		"./*": {
 			"import": {
-				"types": "./dist/mime.d.mts",
-				"default": "./dist/mime.mjs"
+				"types": "./dist/*/index.d.mts",
+				"default": "./dist/*/index.mjs"
 			},
 			"require": {
-				"types": "./dist/mime.d.ts",
-				"default": "./dist/mime.js"
+				"types": "./dist/*/index.d.ts",
+				"default": "./dist/*/index.js"
 			}
 		}
 	},
@@ -89,11 +89,11 @@
 		"@eslint/js": "^10.0.1",
 		"@jest/globals": "^30.2.0",
 		"@types/jest": "^30.0.0",
-		"@types/node": "^25.2.3",
+		"@types/node": "^25.3.1",
 		"concurrently": "^9.2.1",
 		"cross-env": "^10.1.0",
 		"dotenv": "^17.3.1",
-		"eslint": "^10.0.0",
+		"eslint": "^10.0.2",
 		"globals": "^17.3.0",
 		"http-server": "^14.1.1",
 		"jest": "^30.2.0",
@@ -102,9 +102,14 @@
 		"ts-node": "^10.9.2",
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.55.0"
+		"typescript-eslint": "^8.56.1"
 	},
 	"dependencies": {
-		"@alessiofrittoli/web-utils": "^1.20.0"
+		"@alessiofrittoli/date-utils": "^4.1.0",
+		"@alessiofrittoli/exception": "^3.5.0",
+		"@alessiofrittoli/fetcher": "^1.1.0",
+		"@alessiofrittoli/math-utils": "2.0.0",
+		"@alessiofrittoli/url-utils": "^4.0.0",
+		"@alessiofrittoli/web-utils": "^2.0.1"
 	}
 }
