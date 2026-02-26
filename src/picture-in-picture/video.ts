@@ -49,7 +49,7 @@ export interface OpenVideoArtworkPictureInPicture
  * @returns A new Promise that resolves with an object containing the video element displayed in Picture-in-Picture mode.
  * 	See {@link OpenVideoArtworkPictureInPicture} for more info.
  * 
- * @throws Will throw if the Picture-in-Picture API is not available in the browser
+ * @throws {Exception} Throws a new Exception if the Picture-in-Picture API is not supported.
  * 
  * @example
  * ```ts

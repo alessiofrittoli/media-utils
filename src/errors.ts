@@ -1,4 +1,4 @@
-import { ErrorCode as Exception } from '@alessiofrittoli/exception/code';
+import { ErrorCode as Exception } from '@alessiofrittoli/web-utils'
 
 export const MediaUtilsErrorCode = {
 	PIP_NOT_SUPPORTED				: 'ERR:PIPNOTSUPPORTED',
