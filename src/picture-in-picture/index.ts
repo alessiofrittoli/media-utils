@@ -36,7 +36,9 @@ export interface OpenPictureInPictureCommonOptions
 /**
  * Checks if the Picture-in-Picture API is supported by the current browser.
  * 
- * @returns `true` if Picture-in-Picture is enabled and supported, `false` otherwise.
+ * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/pictureInPictureEnabled)
+ * 
+ * @returns `true` if Picture-in-Picture is supported, `false` otherwise.
  */
 export const isPictureInPictureSupported = () => !! document.pictureInPictureEnabled
 
@@ -87,6 +89,8 @@ export type OpenArtworkPictureInPicture = (
  * 
  * @returns A new Promise that resolves to the Picture-in-Picture result.
  * 	See {@link OpenArtworkPictureInPicture} for more info.
+ * 
+ * @throws {Exception} Throws a new Exception if the Picture-in-Picture API is not supported.
  */
 export const openArtworkPictureInPicture = (
 	options: OpenArtworkPictureInPictureOptions = {}

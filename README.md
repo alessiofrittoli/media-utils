@@ -1,22 +1,43 @@
-# Media Utils 🎥
-
-[![NPM Latest Version][version-badge]][npm-url] [![Coverage Status][coverage-badge]][coverage-url] [![Socket Status][socket-badge]][socket-url] [![NPM Monthly Downloads][downloads-badge]][npm-url] [![Dependencies][deps-badge]][deps-url]
-
-[![GitHub Sponsor][sponsor-badge]][sponsor-url]
-
-[version-badge]: https://img.shields.io/npm/v/%40alessiofrittoli%2Fmedia-utils
-[npm-url]: https://npmjs.org/package/%40alessiofrittoli%2Fmedia-utils
-[coverage-badge]: https://coveralls.io/repos/github/alessiofrittoli/media-utils/badge.svg?branch=releases/alpha
-[coverage-url]: https://coveralls.io/github/alessiofrittoli/media-utils?branch=releases/alpha
-[socket-badge]: https://socket.dev/api/badge/npm/package/@alessiofrittoli/media-utils
-[socket-url]: https://socket.dev/npm/package/@alessiofrittoli/media-utils/overview
-[downloads-badge]: https://img.shields.io/npm/dm/%40alessiofrittoli%2Fmedia-utils.svg
-[deps-badge]: https://img.shields.io/librariesio/release/npm/%40alessiofrittoli%2Fmedia-utils
-[deps-url]: https://libraries.io/npm/%40alessiofrittoli%2Fmedia-utils
-[sponsor-badge]: https://img.shields.io/static/v1?label=Fund%20this%20package&message=%E2%9D%A4&logo=GitHub&color=%23DB61A2
-[sponsor-url]: https://github.com/sponsors/alessiofrittoli
-
-## TypeScript media utility library
+<h1 align="center">Media Utils 🎥</h1>
+<p align="center">
+  TypeScript media utility library
+</p>
+<p align="center">
+  <a href="https://npmjs.org/package/@alessiofrittoli/media-utils">
+    <img src="https://img.shields.io/npm/v/@alessiofrittoli/media-utils" alt="Latest version"/>
+  </a>
+  <a href="https://coveralls.io/github/alessiofrittoli/media-utils">
+    <img src="https://coveralls.io/repos/github/alessiofrittoli/media-utils/badge.svg" alt="Test coverage"/>
+  </a>
+  <a href="https://socket.dev/npm/package/@alessiofrittoli/media-utils/overview">
+    <img src="https://socket.dev/api/badge/npm/package/@alessiofrittoli/media-utils" alt="Socket Security score"/>
+  </a>
+  <a href="https://npmjs.org/package/@alessiofrittoli/media-utils">
+    <img src="https://img.shields.io/npm/dm/@alessiofrittoli/media-utils.svg" alt="npm downloads"/>
+  </a>
+  <a href="https://bundlephobia.com/package/@alessiofrittoli/media-utils">
+    <img src="https://badgen.net/bundlephobia/dependency-count/@alessiofrittoli/media-utils" alt="Dependencies"/>
+  </a>
+  <a href="https://libraries.io/npm/%40alessiofrittoli%2Fmedia-utils">
+    <img src="https://img.shields.io/librariesio/release/npm/@alessiofrittoli/media-utils" alt="Dependencies status"/>
+  </a>
+</p>
+<p align="center">
+  <a href="https://bundlephobia.com/package/@alessiofrittoli/media-utils">
+    <img src="https://badgen.net/bundlephobia/min/@alessiofrittoli/media-utils" alt="minified"/>
+  </a>
+  <a href="https://bundlephobia.com/package/@alessiofrittoli/media-utils">
+    <img src="https://badgen.net/bundlephobia/minzip/@alessiofrittoli/media-utils" alt="minizipped"/>
+  </a>
+  <a href="https://bundlephobia.com/package/@alessiofrittoli/media-utils">
+    <img src="https://badgen.net/bundlephobia/tree-shaking/@alessiofrittoli/media-utils" alt="Tree shakable"/>
+  </a>
+</p>
+<p align="center">
+  <a href="https://github.com/sponsors/alessiofrittoli">
+    <img src="https://img.shields.io/static/v1?label=Fund%20this%20package&message=%E2%9D%A4&logo=GitHub&color=%23DB61A2" alt="Fund this package"/>
+  </a>
+</p>
 
 ### Table of Contents
 

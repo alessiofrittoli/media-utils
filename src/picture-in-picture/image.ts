@@ -39,6 +39,8 @@ export type OpenImagePictureInPicture = CreateImageVideoStream
  * 
  * @returns A new Promise that resolves to the Picture-in-Picture result containing the video element and destroy function.
  * 	See {@link OpenImagePictureInPicture} for more info.
+ * 
+ * @throws {Exception} Throws a new Exception if the Picture-in-Picture API is not supported.
  */
 export const openImagePictureInPicture = async (
 	options: OpenImagePictureInPictureOptions
