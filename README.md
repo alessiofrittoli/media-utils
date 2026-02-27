@@ -1649,6 +1649,7 @@ await openArtworkPictureInPicture({
 ```ts
 import {
   openArtworkPictureInPicture,
+  updateMediaMetadata,
   type MediaSessionMetadata,
 } from "@alessiofrittoli/media-utils";
 
