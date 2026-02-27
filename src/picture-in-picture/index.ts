@@ -85,6 +85,8 @@ export type OpenArtworkPictureInPicture = (
  * 
  * It easly handles images and videos rendering using {@link openImagePictureInPicture} or {@link openVideoArtworkPictureInPicture}.
  * 
+ * Once Picture-in-Picture get closed by the user, allocated resources are automatically freed.
+ * 
  * @param options Configuration options for opening the media in Picture-in-Picture window.
  * 	See {@link OpenArtworkPictureInPictureOptions} for more info.
  * 

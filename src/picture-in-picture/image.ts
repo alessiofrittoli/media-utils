@@ -37,6 +37,8 @@ export type OpenImagePictureInPicture = CreateImageVideoStream
 /**
  * Opens an image in Picture-in-Picture window.
  * 
+ * Once Picture-in-Picture get closed by the user, allocated resources are automatically freed.
+ * 
  * @param options Configuration options for opening the image in PiP window.
  * 	See {@link OpenImagePictureInPictureOptions} for more info.
  * 
