@@ -44,7 +44,7 @@ export const isPictureInPictureSupported = () => !! document.pictureInPictureEna
 
 
 /**
- * Validates that the Picture-in-Picture API is supported in the current browser.
+ * Validates that the Picture-in-Picture API is supported by the current browser.
  * 
  * @throws {Exception} Throws a new Exception if the Picture-in-Picture API is not supported.
  */
@@ -83,7 +83,9 @@ export type OpenArtworkPictureInPicture = (
 /**
  * Opens the given media in Picture-in-Picture window.
  * 
- * @param options Configuration options for opening the media in PiP window.
+ * It easly handles images and videos rendering using {@link openImagePictureInPicture} or {@link openVideoArtworkPictureInPicture}.
+ * 
+ * @param options Configuration options for opening the media in Picture-in-Picture window.
  * 	See {@link OpenArtworkPictureInPictureOptions} for more info.
  * 
  * @returns A new Promise that resolves to the Picture-in-Picture result.

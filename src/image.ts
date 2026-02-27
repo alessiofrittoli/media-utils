@@ -76,15 +76,10 @@ export interface RenderOptions
 /**
  * Options for rendering an image into a video stream.
  *
- * It optionally accepts a previously previously created `HTMLVideoElement` where image will get streamed into.
+ * It optionally accepts a previously created `HTMLVideoElement` where image will get streamed into.
  */
 export interface CreateImageVideoStreamOptions extends RenderOptions
 {
-	/**
-	 * The image source to render.
-	 * 
-	 * It can be either a {@link Blob} or a preloaded {@link HTMLImageElement}.
-	 */
 	media: Blob | HTMLImageElement
 }
 

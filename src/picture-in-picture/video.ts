@@ -55,13 +55,13 @@ export interface OpenVideoArtworkPictureInPicture
  * ```ts
  * // With a URL
  * const { video } = await openVideoArtworkPictureInPicture( {
- *  media   : 'https://example.com/song-artwork-video.mp4',
+ *  media   : '/song-artwork-video.mp4',
  *  onQuit  : () => console.log( 'Picture-in-Picture closed' )
  * } )
  * 
  * // With an HTMLVideoElement
  * const media  = document.querySelector( 'video' )
- * media.src    = 'https://example.com/song-artwork-video.mp4'
+ * media.src    = '/song-artwork-video.mp4'
  * 
  * const { video } = await openVideoArtworkPictureInPicture( { media } )
  * ```
@@ -72,21 +72,21 @@ export const openVideoArtworkPictureInPicture = async (
 
 	requiresPictureInPictureAPI()
 
-	const { media, video: prevVideo, onQuit } = options
+	const { media, video, onQuit } = options
 
 	const isNode = media instanceof HTMLVideoElement
 
 	if ( ! isNode ) {
-		const video		= prevVideo || document.createElement( 'video' )
+		const newVideo	= video || document.createElement( 'video' )
 		const newSrc	= Url.format( media )
-		const prevSrc	= video.getAttribute( 'src' )
+		const prevSrc	= newVideo.getAttribute( 'src' )
 
 		if ( newSrc !== prevSrc ) {
 			// update src only if new src is different. this avoids video to restart.
-			video.src = newSrc
+			newVideo.src = newSrc
 		}
 
-		return openVideoArtworkPictureInPicture( { ...options, media: video } )
+		return openVideoArtworkPictureInPicture( { ...options, media: newVideo } )
 	}
 
 
