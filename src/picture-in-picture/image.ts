@@ -1,8 +1,10 @@
 import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
 import { fetch } from '@alessiofrittoli/fetcher/fetch'
 import {
-	createImageVideoStream, getFallbackImage,
-	type CreateImageVideoStream, type CreateImageVideoStreamOptions
+	getFallbackImage,
+	createImageVideoStream,
+	type CreateImageVideoStreamOptions,
+	type CreateImageVideoStream,
 } from '@/image'
 import {
 	requiresPictureInPictureAPI,
@@ -14,7 +16,8 @@ import {
  * Defines configuration options for opening the image in Picture-in-Picture mode.
  * 
  */
-export interface OpenImagePictureInPictureOptions extends OpenPictureInPictureCommonOptions, Omit<CreateImageVideoStreamOptions, 'media'>
+export interface OpenImagePictureInPictureOptions
+	extends OpenPictureInPictureCommonOptions, Omit<CreateImageVideoStreamOptions, 'media'>, Partial<CreateImageVideoStream>
 {
 	/**
 	 * The media to render in a Picture-in-Picture window.
@@ -48,8 +51,10 @@ export const openImagePictureInPicture = async (
 
 	requiresPictureInPictureAPI()
 
-	const { media, video: prevVideo, onQuit, ...rest } = options
-	
+	const {
+		media, video, render, destroy: initialDestroy, onQuit, ...rest
+	} = options
+
 	const isBlob = media instanceof Blob
 	const isNode = media instanceof HTMLImageElement
 
@@ -58,30 +63,43 @@ export const openImagePictureInPicture = async (
 
 		if ( error ) {
 			console.error( error )
-			return openImagePictureInPicture( { ...options, video: prevVideo, media: getFallbackImage() } )
+			return openImagePictureInPicture( { ...options, video, media: getFallbackImage() } )
 		}
 
-		return openImagePictureInPicture( { ...options, video: prevVideo, media: data } )
+		return openImagePictureInPicture( { ...options, video, media: data } )
 	}
 
-	const result = await createImageVideoStream( {
-		media, video: prevVideo, ...rest
-	} )
+	let result: CreateImageVideoStream
 
-	const { video, destroy } = result
+	if ( render && initialDestroy ) {
 
-	if ( document.pictureInPictureElement !== video ) {
-		await video.requestPictureInPicture()
+		result = {
+			render, destroy: initialDestroy,
+			...( await render( { media, video, ...rest } ) ),
+		}
+
+	} else {
+		
+		result = await createImageVideoStream( {
+			media, video, ...rest
+		} )
+
 	}
 
-	const hasListener = video.getAttribute( 'image-pip-quit-listener' ) === 'true'
+	const { video: currentVideo, destroy } = result
+
+	if ( document.pictureInPictureElement !== currentVideo ) {
+		await currentVideo.requestPictureInPicture()
+	}
+
+	const hasListener = currentVideo.getAttribute( 'image-pip-quit-listener' ) === 'true'
 
 	if ( ! hasListener ) {
 
-		video.setAttribute( 'image-pip-quit-listener', 'true' )
-		video.addEventListener( 'leavepictureinpicture', () => {
+		currentVideo.setAttribute( 'image-pip-quit-listener', 'true' )
+		currentVideo.addEventListener( 'leavepictureinpicture', () => {
 
-			video.removeAttribute( 'image-pip-quit-listener' )
+			currentVideo.removeAttribute( 'image-pip-quit-listener' )
 			destroy()
 			onQuit?.()
 	

@@ -42,17 +42,20 @@ describe( 'Image Picture-in-Picture', () => {
 	describe( 'openImagePictureInPicture', () => {
 
 		let mockVideo: HTMLVideoElement
+		let mockRender: jest.Mock
 		let mockDestroy: jest.Mock
 
 		beforeEach( () => {
 			mockVideo	= document.createElement( 'video' )
 			mockDestroy	= jest.fn()
+			mockRender	= jest.fn( ( { video } ) => ( { video } ) )
 
 			mockVideo.requestPictureInPicture = jest.fn().mockResolvedValue( {} )
 			mockVideo.addEventListener = jest.fn( mockVideo.addEventListener )
 
 			createImageVideoStream.mockResolvedValue( {
 				video	: mockVideo,
+				render	: mockRender,
 				destroy	: mockDestroy,
 			} )
 
@@ -127,6 +130,22 @@ describe( 'Image Picture-in-Picture', () => {
 
 			consoleErrorSpy.mockRestore()
 			
+		} )
+
+
+		it( 'reuses createImageVideoStream resources', async () => {
+
+			const result = await openImagePictureInPicture( {
+				media: new Blob( [ 'test' ], { type: 'image/png' } )
+			} )
+
+			await openImagePictureInPicture( {
+				media: new Blob( [ 'test' ], { type: 'image/png' } ),
+				...result,
+			} )
+
+			expect( createImageVideoStream ).toHaveBeenCalledTimes( 1 )
+
 		} )
 
 

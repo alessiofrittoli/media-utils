@@ -76,6 +76,7 @@ describe( 'image', () => {
 
 		class MockHTMLImageElement
 		{
+			complete = false
 			addEventListener = mockImageAddEventListener
 		}
 
@@ -118,7 +119,7 @@ describe( 'image', () => {
 				play		: jest.fn().mockResolvedValue( undefined ),
 			}
 
-			mockImageAddEventListener = jest.fn( ( event, listener ) => listener( new Event( 'Default event' ) ) )
+			mockImageAddEventListener = jest.fn( ( event, listener ) => listener( new Event( event ) ) )
 
 
 			Object.assign( global, {
@@ -128,7 +129,6 @@ describe( 'image', () => {
 			createElement = jest.spyOn( document, 'createElement' ).mockImplementation( ( tagName: string ) => {
 				if ( tagName === 'canvas' ) return mockCanvas
 				if ( tagName === 'video' ) return mockVideo
-				// if ( tagName === 'image' ) return new MockHTMLImageElement()
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				return {} as any
 			} )
@@ -162,7 +162,6 @@ describe( 'image', () => {
 
 		} )
 
-
 		describe( 'Blob', () => {
 
 			it( 'renders Blob into video stream', async () => {
@@ -171,15 +170,14 @@ describe( 'image', () => {
 				const result	= await createImageVideoStream( { media } )
 	
 				expect( result.video ).toBe( mockVideo )
-				expect( result.canvas ).toBe( mockCanvas )
-				expect( result.context ).toBe( mockCanvasRenderingContext2D )
-				expect( result.stream ).toBe( mockMediaStream )
+				expect( result.render ).toBeInstanceOf( Function )
+				expect( result.destroy ).toBeInstanceOf( Function )
 	
 			} )
 
 		} )
-		
-		
+
+
 		describe( 'HTMLImageElement', () => {
 
 			it( 'handles HTMLImageElement that loads successfully', async () => {
@@ -225,9 +223,22 @@ describe( 'image', () => {
 				
 			} )
 
+
+			it( 'doesn\'t await image load if already loaded', async () => {
+
+				const media		= new MockHTMLImageElement()
+				media.complete	= true
+
+				await createImageVideoStream( { media: media as unknown as HTMLImageElement } )
+
+				expect( media.addEventListener )
+					.not.toHaveBeenCalled()
+
+			} )
+
 		} )
-		
-		
+
+
 		it( 'follows rendering process correctly', async () => {
 
 			const media = new Blob( [], { type: 'image/png' } )
@@ -260,13 +271,14 @@ describe( 'image', () => {
 				// renderer aspect ratio
 				const aspectRatio	= 16 / 9
 				const media			= new Blob( [], { type: 'image/png' } )
-				const { canvas }	= await createImageVideoStream( { media, aspectRatio, fit: 'contain' } )
+				
+				await createImageVideoStream( { media, aspectRatio, fit: 'contain' } )
 
-				expect( canvas.width ).toBe( 3413.333333333333 )
-				expect( canvas.height ).toBe( 1920 )
+				expect( mockCanvas.width ).toBe( 3413.333333333333 )
+				expect( mockCanvas.height ).toBe( 1920 )
 
 				expect( mockCanvasRenderingContext2D.clearRect )
-					.toHaveBeenCalledWith( 0, 0, canvas.width, canvas.height )
+					.toHaveBeenCalledWith( 0, 0, mockCanvas.width, mockCanvas.height )
 
 				expect( mockCanvasRenderingContext2D.drawImage )
 					.toHaveBeenCalledWith( mockImageBitmap, 1166.6666666666665, 0, 1080, 1920 )
@@ -283,13 +295,14 @@ describe( 'image', () => {
 				// renderer aspect ratio
 				const aspectRatio	= 9 / 16
 				const media			= new Blob( [], { type: 'image/png' } )
-				const { canvas }	= await createImageVideoStream( { media, aspectRatio, fit: 'cover' } )
+				
+				await createImageVideoStream( { media, aspectRatio, fit: 'cover' } )
 
-				expect( canvas.width ).toBe( 1920 )
-				expect( canvas.height ).toBe( 3413.3333333333335 )
+				expect( mockCanvas.width ).toBe( 1920 )
+				expect( mockCanvas.height ).toBe( 3413.3333333333335 )
 
 				expect( mockCanvasRenderingContext2D.clearRect )
-					.toHaveBeenCalledWith( 0, 0, canvas.width, canvas.height )
+					.toHaveBeenCalledWith( 0, 0, mockCanvas.width, mockCanvas.height )
 
 				expect( mockCanvasRenderingContext2D.drawImage )
 					.toHaveBeenCalledWith( mockImageBitmap, -2074.0740740740744, 0, 6068.148148148149, 3413.3333333333335 )
@@ -301,16 +314,17 @@ describe( 'image', () => {
 
 		describe( 'Resources allocation', () => {
 
-			it( 'reuses provided canvas, context, video, and stream', async () => {
+			it( 'render method doesn\'t allocate new resources', async () => {
 	
 				const media		= new Blob( [], { type: 'image/png' } )
 				const media2	= new Blob( [], { type: 'image/png' } )
 				const result	= await createImageVideoStream( { media } )
 				
-				await createImageVideoStream( { media: media2, ...result } )
+				await result.render( { media: media2 } )
 	
-				expect( createElement ).toHaveBeenNthCalledWith( 1, 'canvas' )
-				expect( createElement ).toHaveBeenNthCalledWith( 2, 'video' )
+				expect( createElement ).toHaveBeenNthCalledWith( 1, 'video' )
+				expect( createElement ).toHaveBeenNthCalledWith( 2, 'canvas' )
+				expect( mockCanvas.getContext ).toHaveBeenCalledTimes( 1 )
 	
 			} )
 
@@ -318,8 +332,10 @@ describe( 'image', () => {
 			it( 'resets correct properties to the video element', async () => {
 
 				mockVideo.src	= 'https://example.com/previous-video-running.mp4'
-				const blob		= new Blob( [], { type: 'image/png' } )
-				const result	= await createImageVideoStream( { media: blob } )
+				const media		= new Blob( [], { type: 'image/png' } )
+				const result	= await createImageVideoStream( {
+					media, video: mockVideo as unknown as HTMLVideoElement
+				} )
 
 				expect( result.video.src ).toBe( '' ) // reset video src to ''
 				expect( result.video.srcObject ).toBe( mockMediaStream )
@@ -331,20 +347,56 @@ describe( 'image', () => {
 			} )
 
 	
-	
 			it( 'returned destroy function allows to stop tracks and clear resources', async () => {
 	
 				const mockTrack = { stop: jest.fn() }
 				mockMediaStream.getTracks.mockReturnValue( [ mockTrack ] )
 	
-				const blob		= new Blob( [], { type: 'image/png' } )
-				const result	= await createImageVideoStream( { media: blob } )
+				const media		= new Blob( [], { type: 'image/png' } )
+				const result	= await createImageVideoStream( { media } )
 	
 				result.destroy()
 	
 				expect( mockTrack.stop ).toHaveBeenCalled()
 				expect( result.video.srcObject ).toBeNull()
 	
+			} )
+
+		} )
+
+
+		describe( 'Subsequent renderings', () => {
+
+			it( 'updates rendered content inheriting initial options', async () => {
+	
+				const media	= document.createElement( 'img' )
+				media.src	= '/image-1.png'
+
+				const { render } = await createImageVideoStream( { media } )
+				
+				media.src = '/image-2.png'
+				await render()
+
+				expect( createImageBitmap )
+					.toHaveBeenNthCalledWith( 1, media )
+
+				expect( createImageBitmap )
+					.toHaveBeenNthCalledWith( 2, media )
+	
+			} )
+
+
+			it( 'detach stream from old video elements', async () => {
+
+				const media				= new Blob( [], { type: 'image/png' } )
+				const { video, render }	= await createImageVideoStream( { media } )
+				const newVideo			= { ...mockVideo } as unknown as HTMLVideoElement
+
+				await render( { video: newVideo } )
+
+				expect( video.srcObject ).toBeNull()
+				expect( newVideo.srcObject ).toBe( mockMediaStream )
+
 			} )
 
 		} )

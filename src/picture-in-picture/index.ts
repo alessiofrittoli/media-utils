@@ -70,14 +70,13 @@ export interface OpenArtworkPictureInPictureOptions
 	media?: CreateImageVideoStreamOptions[ 'media' ] | HTMLVideoElement | MediaArtWork
 }
 
-
 /**
  * Defines the returned result of opening a media artwork into a Picture-in-Picture window.
  * 
  */
 export type OpenArtworkPictureInPicture = (
-	& Partial<OpenImagePictureInPicture>
-	& Partial<OpenVideoArtworkPictureInPicture>
+	| OpenImagePictureInPicture
+	| OpenVideoArtworkPictureInPicture
 )
 
 
@@ -111,7 +110,10 @@ export const openArtworkPictureInPicture = (
 		return openImagePictureInPicture( { media: rawArtwork, ...rest } )
 	}
 
+	const { destroy } = options
+	
 	if ( isVideo ) {
+		destroy?.()
 		return openVideoArtworkPictureInPicture( { media: rawArtwork, ...rest } )
 	}
 
@@ -127,7 +129,8 @@ export const openArtworkPictureInPicture = (
 		)
 	}
 
-	if ( artworkUrlObj.type?.includes( 'video' ) ) {	
+	if ( artworkUrlObj.type?.includes( 'video' ) ) {
+		destroy?.()
 		return openVideoArtworkPictureInPicture( { media: artworkUrl, ...rest } )
 	}
 	
