@@ -1413,6 +1413,8 @@ Validates that the Picture-in-Picture API is supported by the current browser.
 
 Opens an image in Picture-in-Picture window.
 
+Once Picture-in-Picture get closed by the user, allocated resources are automatically freed.
+
 <details>
 
 <summary style="cursor:pointer">Parameters</summary>
@@ -1587,6 +1589,8 @@ Opens the given media in Picture-in-Picture window.
 
 It easly handles images and videos rendering using [`openImagePictureInPicture`](#openimagepictureinpicture) or [`openVideoArtworkPictureInPicture`](#openvideoartworkpictureinpicture).
 
+Once Picture-in-Picture get closed by the user, allocated resources are automatically freed.
+
 <details>
 
 <summary style="cursor:pointer">Parameters</summary>
@@ -1700,21 +1704,6 @@ try {
       console.error(error);
   }
 }
-```
-
----
-
-###### Free allocated resources
-
-```ts
-import { openArtworkPictureInPicture } from "@alessiofrittoli/media-utils";
-
-const { destroy } = await openArtworkPictureInPicture({ ... });
-
-// free allocated resources after 5 seconds
-setTimeout(() => {
-  destroy();
-}, 5000);
 ```
 
 </details>
