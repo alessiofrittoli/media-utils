@@ -2,6 +2,10 @@ import { Exception } from '@alessiofrittoli/exception'
 import { Url, type UrlInput } from '@alessiofrittoli/url-utils'
 import { ErrorCode } from './errors'
 
+/**
+ * 1x1 black Base64 Data URI image.
+ * 
+ */
 export const BLACK_BASE64_DATA_URI_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+AkAAP8A+7Xdu1sAAAAASUVORK5CYII='
 
 
@@ -33,19 +37,22 @@ export const getFallbackImage = (
 
 
 /**
- * Options for rendering an image into a video stream.
- *
- * It optionally accepts a previously returned {@link CreateImageVideoStream}
- * object in order to reuse existing rendering resources.
+ * Rendering options.
+ * 
  */
-export interface CreateImageVideoStreamOptions extends Partial<Omit<CreateImageVideoStream, 'destroy'>>
+export interface RenderOptions
 {
 	/**
 	 * The image source to render.
 	 * 
 	 * It can be either a {@link Blob} or a preloaded {@link HTMLImageElement}.
 	 */
-	media: Blob | HTMLImageElement
+	media?: HTMLImageElement | Blob
+	/**
+	 * A previously created `HTMLVideoElement` where image get streamed into.
+	 * 
+	 */
+	video?: HTMLVideoElement
 	/**
 	 * Target aspect ratio (width / height) of the rendering area.
 	 * 
@@ -55,8 +62,8 @@ export interface CreateImageVideoStreamOptions extends Partial<Omit<CreateImageV
 	/**
 	 * Defines how the media should fit inside the rendering area.
 	 * 
-	 * - `cover` behaves like `object-fit: cover`
 	 * - `contain` (default) behaves like `object-fit: contain`
+	 * - `cover` behaves like `object-fit: cover`
 	 * 
 	 * Only applies when `aspectRatio` is specified.
 	 * 
@@ -67,58 +74,93 @@ export interface CreateImageVideoStreamOptions extends Partial<Omit<CreateImageV
 
 
 /**
- * Defines the returned result of rendering an image into a video.
- * 
+ * Options for rendering an image into a video stream.
+ *
+ * It optionally accepts a previously created `HTMLVideoElement` where image will get streamed into.
  */
-export interface CreateImageVideoStream
+export interface CreateImageVideoStreamOptions extends RenderOptions
 {
-	/**
-	 * The {@link HTMLVideoElement} streaming the rendered image.
-	 * 
-	 */
-	video: HTMLVideoElement
-	/**
-	 * The `HTMLCanvasElement` used to render and stream the image into the `video`.
-	 * 
-	 */
-	canvas: HTMLCanvasElement
-	/**
-	 * The `CanvasRenderingContext2D`.
-	 * 
-	 */
-	context: CanvasRenderingContext2D
-	/**
-	 * Stops all media tracks and releases allocated resources.
-	 * 
-	 */
-	stream: MediaStream
-	/**
-	 * A callable function that stops stream tracks and free resources.
-	 * 
-	 */
-	destroy: () => void
+	media: Blob | HTMLImageElement
 }
 
 
 /**
- * Renders an image into a canvas and exposes it as a video stream.
+ * The rendering result.
+ * 
+ */
+export interface RenderResult
+{
+	/**
+	 * The `HTMLVideoElement` where image get streamed into.
+	 * 
+	 */
+	video: HTMLVideoElement
+}
+
+
+/**
+ * Render a new image to the video stream.
+ * 
+ * @param options (Optional) An object defining new rendering options. See {@link RenderOptions} for more info.
+ * 
+ * @returns A new Promise that resolves the `HTMLVideoElement` where image get streamed into once rendering is completed.
+ */
+export type RenderHandler = ( options?: RenderOptions ) => Promise<RenderResult>
+
+
+/**
+ * Stop stream tracks and release allocated resources.
+ * 
+ */
+export type DestroyHandler = () => void
+
+
+/**
+ * Defines the returned result of rendering an image into a video.
+ * 
+ */
+export interface CreateImageVideoStream extends RenderResult
+{
+	/**
+	 * Render a new image to the video stream.
+	 * 
+	 * @param options (Optional) An object defining new rendering options. See {@link RenderOptions} for more info.
+	 * 
+	 * @returns A new Promise that resolves the `HTMLVideoElement` where image get streamed into once rendering is completed.
+	 */
+    render: RenderHandler
+	/**
+	 * Stop stream tracks and release allocated resources.
+	 * 
+	 */
+	destroy: DestroyHandler
+}
+
+
+/**
+ * Render an image into a video stream.
  * 
  * If the provided media (HTMLImageElement) fails to load, a 1x1 black frame is rendered instead and the promise does not reject.
  * 
  * @param options Rendering options. See {@link CreateImageVideoStreamOptions} for more info.
- * @returns A promise resolving to the allocated rendering resources. See {@link CreateImageVideoStream} for more info.
+ * @returns A new Promise that resolves the allocated rendering resources. See {@link CreateImageVideoStream} for more info.
  */
 export const createImageVideoStream = async (
 	options: CreateImageVideoStreamOptions
 ): Promise<CreateImageVideoStream> => {
 
 	const {
-		media, video: prevVideo, aspectRatio, fit = 'contain', 
+		media: initialMedia, video: initialVideo = document.createElement( 'video' ),
+		aspectRatio: initialAspectRatio, fit: initialFit = 'contain', 
 	} = options
 
-	let source		= media
-	const canvas	= options.canvas || document.createElement( 'canvas' )
-	const context	= options.context || ( canvas.getContext && canvas.getContext( '2d' ) )
+	/**
+	 * The `HTMLVideoElement` where image get streamed into.
+	 * 
+	 */
+	let currentVideo	= initialVideo
+	const canvas		= document.createElement( 'canvas' )
+	const context		= canvas.getContext && canvas.getContext( '2d' )
 
 	if ( ! context ) {
 		throw new Exception(
@@ -127,24 +169,59 @@ export const createImageVideoStream = async (
 			}
 		)
 	}
+	
+	const stream = canvas.captureStream( 30 )
 
-	const render = async () => {
+	const destroy: DestroyHandler = () => {
+		currentVideo.srcObject = null
+		stream.getTracks().forEach( track => track.stop() )
+	}
 
-		const bitmap	= await createImageBitmap( source )
-		const video		= prevVideo || document.createElement( 'video' )
-		const stream	= options.stream || canvas.captureStream( 30 )
+	const render: RenderHandler = async ( options = {} ) => {
 
-		if ( video.src ) {
-			video.src = ''
+		const {
+			media		= initialMedia,
+			video		= currentVideo,
+			aspectRatio	= initialAspectRatio,
+			fit			= initialFit,
+		} = options
+		
+		if ( currentVideo !== video ) {
+			currentVideo.srcObject = null
 		}
-		if ( ! video.srcObject ) {
-			video.srcObject = stream
+
+		currentVideo = video
+
+		if ( media instanceof HTMLImageElement ) {
+			if ( ! media.complete ) {
+				try {
+					await new Promise<void>( ( resolve, reject ) => {
+						media.addEventListener( 'load', () => resolve(), { once: true } )
+		
+						media.addEventListener( 'error', async cause => {
+							reject( new Exception( 'Couldn\'t load the given resource.', { code: ErrorCode.UNKNOWN, cause } ) )
+						}, { once: true } )
+					} )
+				} catch ( error ) {
+					console.error( error )
+					return render( { media: getFallbackImage() } )
+				}
+			}
 		}
 
-		video.playsInline	= true
-		video.muted			= true
-		video.loop			= false
-		video.autoplay		= true
+		const bitmap = await createImageBitmap( media )
+
+		if ( currentVideo.src ) {
+			currentVideo.src = ''
+		}
+		if ( ! currentVideo.srcObject ) {
+			currentVideo.srcObject = stream
+		}
+
+		currentVideo.playsInline	= true
+		currentVideo.muted			= true
+		currentVideo.loop			= false
+		currentVideo.autoplay		= true
 
 
 		canvas.width	= bitmap.width
@@ -194,31 +271,11 @@ export const createImageVideoStream = async (
 		context.drawImage( bitmap, offsetX, offsetY, drawWidth, drawHeight )
 		bitmap.close()
 
-		await video.play()
+		await currentVideo.play()
 
-		const destroy = () => {
-			stream.getTracks().forEach( track => track.stop() )
-			video.srcObject = null
-		}
-
-		return { video, canvas, context, stream, destroy }
-	}
-	
-	if ( source instanceof HTMLImageElement ) {
-		const image = source
-		await new Promise<void>( resolve => {
-			image.addEventListener( 'load', () => {
-				resolve()
-			}, { once: true } )
-
-			image.addEventListener( 'error', cause => {
-				console.error( new Exception( 'Couldn\'t load the given resource.', { code: ErrorCode.UNKNOWN, cause } ) )
-				source = getFallbackImage()
-				resolve()
-			}, { once: true } )
-		} )
+		return { video: currentVideo }
 	}
 
-	return render()
+	return { render, destroy, ...( await render( { media: initialMedia } ) ) }
 
 }

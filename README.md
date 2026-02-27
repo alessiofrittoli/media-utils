@@ -39,6 +39,9 @@
   </a>
 </p>
 
+[sponsor-badge]: https://img.shields.io/static/v1?label=Fund%20this%20package&message=%E2%9D%A4&logo=GitHub&color=%23DB61A2
+[sponsor-url]: https://github.com/sponsors/alessiofrittoli
+
 ### Table of Contents
 
 - [Getting started](#getting-started)
@@ -49,6 +52,8 @@
     - [Audio Engine Manager](#audio-engine-manager)
     - [Audio Utilities](#audio-utilities)
   - [Media Playback](#media-playback)
+  - [Image Video Stream](#image-video-stream)
+  - [Media Artwork Picture-in-Picture](#media-artwork-picture-in-picture)
   - [Utilities](#utilities)
 - [Development](#development)
   - [Install depenendencies](#install-depenendencies)
@@ -1007,6 +1012,708 @@ pause.addEventListener("click", () => {
   pauseMedia( { media, fade: 800 } )
 
 });
+```
+
+</details>
+
+---
+
+#### Image Video Stream
+
+##### Types
+
+###### `CreateImageVideoStreamOptions` interface
+
+Options for rendering an image into a video stream.
+
+It optionally accepts a previously created `HTMLVideoElement` where image will get streamed into.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+- Extends [`RenderOptions`](#renderoptions-interface) interface.
+
+| Property | Type                     | Default | Description                                                                              |
+| -------- | ------------------------ | ------- | ---------------------------------------------------------------------------------------- |
+| `media`  | `Blob\|HTMLImageElement` | -       | The image source to render. It can be either a `Blob` or a preloaded `HTMLImageElement`. |
+
+</details>
+
+---
+
+###### `RenderOptions` interface
+
+Rendering options.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property      | Type                     | Default   | Description                                                                                         |
+| ------------- | ------------------------ | --------- | --------------------------------------------------------------------------------------------------- |
+| `media`       | `Blob\|HTMLImageElement` | -         | (Optional) The image source to render. It can be either a `Blob` or a preloaded `HTMLImageElement`. |
+| `video`       | `HTMLVideoElement`       | -         | (Optional) A previously created `HTMLVideoElement` where image get streamed into.                   |
+| `aspectRatio` | `number`                 | -         | (Optional) Target aspect ratio (width / height) of the rendering area.                              |
+|               |                          |           | If omitted, the original media aspect ratio is preserved.                                           |
+| `fit`         | `'contain'\|'cover'`     | `contain` | (Optional) Defines how the media should fit inside the rendering area.                              |
+|               |                          |           | - `contain` (default) behaves like `object-fit: contain`                                            |
+|               |                          |           | - `cover` behaves like `object-fit: cover`                                                          |
+|               |                          |           | Only applies when `aspectRatio` is specified.                                                       |
+
+</details>
+
+---
+
+###### `RenderResult` interface
+
+The rendering result.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property | Type               | Description                                           |
+| -------- | ------------------ | ----------------------------------------------------- |
+| `video`  | `HTMLVideoElement` | The `HTMLVideoElement` where image get streamed into. |
+
+</details>
+
+---
+
+###### `RenderHandler` type
+
+Render a new image to the video stream.
+
+```ts
+type RenderHandler = (options?: RenderOptions) => Promise<RenderResult>;
+```
+
+---
+
+###### `DestroyHandler` type
+
+Stop stream tracks and release allocated resources.
+
+```ts
+type DestroyHandler = () => void;
+```
+
+---
+
+###### `CreateImageVideoStream` interface
+
+Defines the returned result of rendering an image into a video.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+- Extends [`RenderResult`](#renderresult-interface) interface.
+
+| Property  | Type             | Description                                          |
+| --------- | ---------------- | ---------------------------------------------------- |
+| `render`  | `RenderHandler`  | Render a new image to the video stream.              |
+|           |                  | - See [`RenderHandler` type](#renderhandler-type).   |
+| `destroy` | `DestroyHandler` | Stop stream tracks and release allocated resources.  |
+|           |                  | - See [`DestroyHandler` type](#destroyhandler-type). |
+
+</details>
+
+---
+
+##### `createImageVideoStream`
+
+Render an image into a video stream.
+
+If the provided media (HTMLImageElement) fails to load, a 1x1 black frame is rendered instead and the promise does not reject.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                            | Description                                                                                  |
+| --------- | ------------------------------- | -------------------------------------------------------------------------------------------- |
+| `options` | `CreateImageVideoStreamOptions` | Rendering options.                                                                           |
+|           |                                 | - See [`CreateImageVideoStreamOptions`](#createimagevideostreamoptions-interface) interface. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `Promise<CreateImageVideoStream>`
+
+A new Promise that resolves the allocated rendering resources.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+###### Fetch and render image Blob
+
+```ts
+import { fetch } from "@alessiofrittoli/fetcher";
+import {
+  getFallbackImage,
+  createImageVideoStream,
+} from "@alessiofrittoli/media-utils";
+
+const createImageStream = async () => {
+  const { data: media, error } = await fetch<Blob>("/path-to/image.png", {
+    responseType: "blob",
+  });
+
+  if (error) {
+    return createImageVideoStream({ media: getFallbackImage() });
+  }
+
+  return createImageVideoStream({ media });
+};
+```
+
+---
+
+###### Custom aspect ratio
+
+```ts
+import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+
+const createImageStream = () => {
+  const media = document.createElement("img");
+  media.src = "/path-to/image.png";
+
+  return createImageVideoStream({
+    media,
+    aspectRatio: 16 / 9,
+    fit: "cover", // or 'contain'
+  });
+};
+```
+
+---
+
+###### Update streamed content
+
+```ts
+import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+
+const createImageStream = async () => {
+  const media = document.createElement("img");
+  media.src = "/path-to/image.png";
+
+  const { video, render } = await createImageVideoStream({
+    media,
+    aspectRatio: 16 / 9,
+    fit: "cover", // or 'contain'
+  });
+
+  // update streamed content after 5 seconds
+  setTimeout(() => {
+    media.src = "/path-to/image-2.png";
+
+    await render({ aspectRatio: 1 });
+  }, 5000);
+
+  return video;
+};
+```
+
+---
+
+###### Using a previously created video
+
+```ts
+import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+
+const createImageStream = async () => {
+  const video = document.createElement("video");
+  video.src = "/path-to/video.mp4";
+
+  const media = document.createElement("img");
+  media.src = "/path-to/image.png";
+
+  // replace original video content with streamed image
+  await createImageVideoStream({
+    media,
+    video,
+    aspectRatio: 16 / 9,
+    fit: "cover", // or 'contain'
+  });
+
+  return video;
+};
+```
+
+---
+
+###### Free allocated resources
+
+```ts
+import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+
+const createImageStream = async () => {
+  const media = document.createElement("img");
+  media.src = "/path-to/image.png";
+
+  // replace original video content with streamed image
+  const { video, destroy } = await createImageVideoStream({
+    media,
+    aspectRatio: 16 / 9,
+    fit: "cover", // or 'contain'
+  });
+
+  // free allocated resources after 5 seconds
+  setTimeout(() => {
+    destroy();
+  }, 5000);
+
+  return video;
+};
+```
+
+</details>
+
+---
+
+#### Media Artwork Picture-in-Picture
+
+##### Types
+
+###### `OpenPictureInPictureCommonOptions` interface
+
+Defines common configuration options for opening the media in Picture-in-Picture mode.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type         | Description                                                                |
+| --------- | ------------ | -------------------------------------------------------------------------- |
+| `onQuit`  | `() => void` | (Optional) A callback to execute when Picture-in-Picture window is closed. |
+
+</details>
+
+---
+
+###### `OpenImagePictureInPictureOptions` interface
+
+Defines configuration options for opening the image in Picture-in-Picture mode.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+- Extends [`OpenPictureInPictureCommonOptions`](#openpictureinpicturecommonoptions-interface) interface.
+- Extends [`CreateImageVideoStreamOptions`](#createimagevideostreamoptions-interface) interface.
+- Partially extends [`CreateImageVideoStream`](#createimagevideostream-interface) interface.
+
+| Parameter | Type                                                 | Description                                         |
+| --------- | ---------------------------------------------------- | --------------------------------------------------- |
+| `media`   | `CreateImageVideoStreamOptions[ 'media' ]\|UrlInput` | The media to render in a Picture-in-Picture window. |
+
+</details>
+
+---
+
+###### `OpenImagePictureInPicture` type
+
+Defines the returned result of opening a rendered image into a video Picture-in-Picture window.
+
+- Alias for [`CreateImageVideoStream`](#createimagevideostream-interface) interface
+
+---
+
+###### `OpenVideoArtworkPictureInPictureOptions` interface
+
+Defines configuration options for opening the video in Picture-in-Picture window.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+- Extends [`OpenPictureInPictureCommonOptions`](#openpictureinpicturecommonoptions-interface) interface.
+- Partially extends [`OpenVideoArtworkPictureInPicture`](#openvideoartworkpictureinpictureoptions-interface) interface.
+
+| Parameter | Type                         | Description                                       |
+| --------- | ---------------------------- | ------------------------------------------------- |
+| `media`   | `HTMLVideoElement\|UrlInput` | The media to open in a Picture-in-Picture window. |
+
+</details>
+
+---
+
+###### `OpenVideoArtworkPictureInPicture` interface
+
+Defines the returned result of opening a video into a Picture-in-Picture window.
+
+<details>
+
+<summary style="cursor:pointer">Properties</summary>
+
+| Property | Type               | Description                                   |
+| -------- | ------------------ | --------------------------------------------- |
+| `video`  | `HTMLVideoElement` | The `HTMLVideoElement` in Picture-in-Picture. |
+
+</details>
+
+---
+
+###### `OpenArtworkPictureInPictureOptions` interface
+
+Defines configuration options for opening media artwork in Picture-in-Picture window.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+- Extends [`OpenImagePictureInPictureOptions`](#openimagepictureinpictureoptions-interface) interface.
+- Extends [`OpenVideoArtworkPictureInPictureOptions`](#openvideoartworkpictureinpictureoptions-interface) interface.
+
+| Parameter | Type                                                                      | Description                                                                           |
+| --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `media`   | `CreateImageVideoStreamOptions['media']\| HTMLVideoElement\|MediaArtWork` | The media to open in a Picture-in-Picture window.                                     |
+|           |                                                                           | - See [`CreateImageVideoStreamOptions`](#createimagevideostream-interface) interface. |
+|           |                                                                           | - See [`MediaArtWork`](#mediaartwork) interface.                                      |
+
+</details>
+
+---
+
+###### `OpenArtworkPictureInPicture` interface
+
+Defines the returned result of opening a media artwork into a Picture-in-Picture window.
+
+It could be [`OpenImagePictureInPicture`](#openimagepictureinpicture-type) or [`OpenVideoArtworkPictureInPicture`](#openvideoartworkpictureinpicture-interface).
+
+---
+
+##### `isPictureInPictureSupported`
+
+Checks if the Picture-in-Picture API is supported by the current browser.
+
+---
+
+##### `requiresPictureInPictureAPI`
+
+Validates that the Picture-in-Picture API is supported by the current browser.
+
+- Throws a new `Exception` with code `ErrorCode.PIP_NOT_SUPPORTED` if the Picture-in-Picture API is not supported.
+
+---
+
+##### `openImagePictureInPicture`
+
+Opens an image in Picture-in-Picture window.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                               | Description                                                                                        |
+| --------- | ---------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `options` | `OpenImagePictureInPictureOptions` | Configuration options for opening the image in PiP window.                                         |
+|           |                                    | - See [`OpenImagePictureInPictureOptions`](#openimagepictureinpictureoptions-interface) interface. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `Promise<OpenImagePictureInPicture>`
+
+A new Promise that resolves to the Picture-in-Picture result containing the video element and destroy function.
+
+- See [`OpenImagePictureInPicture`](#openimagepictureinpicture-type) for more info.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+###### Simple usage
+
+```ts
+import {
+  ErrorCode,
+  openImagePictureInPicture,
+} from "@alessiofrittoli/media-utils";
+
+try {
+  navigator.mediaSession.setActionHandler("enterpictureinpicture", async () => {
+    try {
+      await openImagePictureInPicture({
+        media: { pathname: "path/to/image.png" },
+        aspectRatio: 1,
+        fit: "cover",
+        onQuit: () => console.log("Picture-in-Picture closed"),
+      });
+    } catch (_err) {
+      const err = _err as Error;
+
+      const error = Exception.isException<string, ErrorCode>(err)
+        ? err
+        : new Exception(err.message, {
+            code: ErrorCode.UNKNOWN,
+            name: err.name,
+            cause: err,
+          });
+      switch (error.code) {
+        case ErrorCode.PIP_NOT_SUPPORTED:
+          alert("Picture-In-Picture is not supported by the current browser.");
+          break;
+        case ErrorCode.RENDERING_CONTEXT_UNAVAILABLE:
+          alert("Couldn't render image in Picture-in-Picture.");
+          break;
+        default:
+          console.error(error);
+      }
+    }
+  });
+} catch (error) {
+  console.warn(
+    'Warning! The "enterpictureinpicture" media session action is not supported.',
+    error,
+  );
+}
+```
+
+---
+
+###### Update image Picture-in-Picture content
+
+```ts
+import {
+  openImagePictureInPicture,
+  type OpenImagePictureInPicture,
+} from "@alessiofrittoli/media-utils";
+
+let resources: OpenImagePictureInPicture;
+
+navigator.mediaSession.setActionHandler("enterpictureinpicture", async () => {
+  resources = await openImagePictureInPicture({
+    media: { pathname: "/path/to/image.png" },
+  });
+});
+
+navigator.mediaSession.setActionHandler("nexttrack", async () => {
+  resources = await openImagePictureInPicture({
+    media: { pathname: "/path/to/image.png" },
+    ...resources,
+  });
+});
+```
+
+</details>
+
+---
+
+##### `openVideoArtworkPictureInPicture`
+
+Opens a video artwork element in Picture-in-Picture window.
+
+This function is intended for rendering a short song artwork video.
+This is not suitable if your're looking for a proper video Picture-in-Picture since it simple as calling `video.requestPictureInPicture()`.
+
+Supports both `HTMLVideoElement` instances and URL inputs. When a URL is provided, a video element is created and the URL is set as its source.
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                                      | Description                                                                                                      |
+| --------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `options` | `OpenVideoArtworkPictureInPictureOptions` | Configuration options for opening the video in Picture-in-Picture.                                               |
+|           |                                           | - See [`OpenVideoArtworkPictureInPictureOptions`](#openvideoartworkpictureinpictureoptions-interface) interface. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `Promise<OpenVideoArtworkPictureInPicture>`
+
+A new Promise that resolves with an object containing the video element displayed in Picture-in-Picture mode.
+
+- See [`OpenVideoArtworkPictureInPicture`](#openvideoartworkpictureinpicture-interface) for more info.
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+```ts
+import { openVideoArtworkPictureInPicture } from "@alessiofrittoli/media-utils";
+
+// With a URL
+const { video } = await openVideoArtworkPictureInPicture({
+  media: "/song-artwork-video.mp4",
+  onQuit: () => console.log("Picture-in-Picture closed"),
+});
+
+// With an HTMLVideoElement
+const media = document.querySelector("video");
+media.src = "/song-artwork-video.mp4";
+
+const { video } = await openVideoArtworkPictureInPicture({ media });
+```
+
+</details>
+
+---
+
+##### `openArtworkPictureInPicture`
+
+Opens the given media in Picture-in-Picture window.
+
+It easly handles images and videos rendering using [`openImagePictureInPicture`](#openimagepictureinpicture) or [`openVideoArtworkPictureInPicture`](#openvideoartworkpictureinpicture).
+
+<details>
+
+<summary style="cursor:pointer">Parameters</summary>
+
+| Parameter | Type                                 | Description                                                                                            |
+| --------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `options` | `OpenArtworkPictureInPictureOptions` | Configuration options for opening the media in Picture-in-Picture window.                              |
+|           |                                      | - See [`OpenArtworkPictureInPictureOptions`](#openartworkpictureinpictureoptions-interface) interface. |
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `Promise<OpenArtworkPictureInPicture>`
+
+A new Promise that resolves to the Picture-in-Picture result.
+
+- See [`OpenArtworkPictureInPicture`](#openartworkpictureinpicture-interface).
+
+</details>
+
+---
+
+<details>
+
+<summary style="cursor:pointer">Examples</summary>
+
+###### Simple usage
+
+```ts
+import { openArtworkPictureInPicture } from "@alessiofrittoli/media-utils";
+
+const result = await openArtworkPictureInPicture({
+  media: {
+    type: "image/png",
+    src: "/path/to/image.png",
+  },
+  aspectRatio: 1,
+  fit: "cover",
+});
+
+// update
+await openArtworkPictureInPicture({
+  media: {
+    type: "video/mp4",
+    src: "/path/to/video.mp4",
+  },
+  ...result,
+});
+```
+
+---
+
+###### Using media session image
+
+```ts
+import {
+  openArtworkPictureInPicture,
+  type MediaSessionMetadata,
+} from "@alessiofrittoli/media-utils";
+
+const data: MediaSessionMetadata = {
+  title: "Test Song",
+  artist: "Test Artist",
+  album: "Test Album",
+  artwork: [
+    { src: "/path/to/song-artwork.png", sizes: 128, type: "image/png" },
+  ],
+};
+
+updateMediaMetadata(data);
+
+await openArtworkPictureInPicture();
+```
+
+---
+
+###### Handling errors
+
+```ts
+import {
+  ErrorCode,
+  openArtworkPictureInPicture,
+} from "@alessiofrittoli/media-utils";
+
+try {
+  await openArtworkPictureInPicture({ ... });
+} catch (_err) {
+  const err = _err as Error;
+
+  const error = Exception.isException<string, ErrorCode>(err)
+    ? err
+    : new Exception(err.message, {
+        code: ErrorCode.UNKNOWN,
+        name: err.name,
+        cause: err,
+      });
+  switch (error.code) {
+    case ErrorCode.PIP_NOT_SUPPORTED:
+      alert("Picture-In-Picture is not supported by the current browser.");
+      break;
+    case ErrorCode.RENDERING_CONTEXT_UNAVAILABLE:
+      alert("Couldn't render image in Picture-in-Picture.");
+      break;
+    default:
+      console.error(error);
+  }
+}
+```
+
+---
+
+###### Free allocated resources
+
+```ts
+import { openArtworkPictureInPicture } from "@alessiofrittoli/media-utils";
+
+const { destroy } = await openArtworkPictureInPicture({ ... });
+
+// free allocated resources after 5 seconds
+setTimeout(() => {
+  destroy();
+}, 5000);
 ```
 
 </details>

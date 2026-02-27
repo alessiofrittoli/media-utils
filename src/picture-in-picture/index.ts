@@ -44,7 +44,7 @@ export const isPictureInPictureSupported = () => !! document.pictureInPictureEna
 
 
 /**
- * Validates that the Picture-in-Picture API is supported in the current browser.
+ * Validates that the Picture-in-Picture API is supported by the current browser.
  * 
  * @throws {Exception} Throws a new Exception if the Picture-in-Picture API is not supported.
  */
@@ -70,21 +70,22 @@ export interface OpenArtworkPictureInPictureOptions
 	media?: CreateImageVideoStreamOptions[ 'media' ] | HTMLVideoElement | MediaArtWork
 }
 
-
 /**
  * Defines the returned result of opening a media artwork into a Picture-in-Picture window.
  * 
  */
 export type OpenArtworkPictureInPicture = (
-	& Partial<OpenImagePictureInPicture>
-	& Partial<OpenVideoArtworkPictureInPicture>
+	| OpenImagePictureInPicture
+	| OpenVideoArtworkPictureInPicture
 )
 
 
 /**
  * Opens the given media in Picture-in-Picture window.
  * 
- * @param options Configuration options for opening the media in PiP window.
+ * It easly handles images and videos rendering using {@link openImagePictureInPicture} or {@link openVideoArtworkPictureInPicture}.
+ * 
+ * @param options Configuration options for opening the media in Picture-in-Picture window.
  * 	See {@link OpenArtworkPictureInPictureOptions} for more info.
  * 
  * @returns A new Promise that resolves to the Picture-in-Picture result.
@@ -111,7 +112,10 @@ export const openArtworkPictureInPicture = (
 		return openImagePictureInPicture( { media: rawArtwork, ...rest } )
 	}
 
+	const { destroy } = options
+	
 	if ( isVideo ) {
+		destroy?.()
 		return openVideoArtworkPictureInPicture( { media: rawArtwork, ...rest } )
 	}
 
@@ -127,7 +131,8 @@ export const openArtworkPictureInPicture = (
 		)
 	}
 
-	if ( artworkUrlObj.type?.includes( 'video' ) ) {	
+	if ( artworkUrlObj.type?.includes( 'video' ) ) {
+		destroy?.()
 		return openVideoArtworkPictureInPicture( { media: artworkUrl, ...rest } )
 	}
 	
