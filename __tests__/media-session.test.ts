@@ -96,7 +96,11 @@ describe( 'MediaSession', () => {
 			updatePositionState( media )
 
 			expect( navigator.mediaSession.setPositionState )
-				.toHaveBeenCalledWith( {} )
+				.toHaveBeenCalledWith( {
+					duration	: Infinity,
+					playbackRate: 1,
+					position	: 0,
+				} )
 
 		} )
 
