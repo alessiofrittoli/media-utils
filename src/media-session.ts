@@ -109,18 +109,17 @@ export const updatePositionState = ( media: HTMLMediaElement ) => {
 	if ( ! navigator.mediaSession || ! ( 'setPositionState' in navigator.mediaSession ) ) {
 		return console.warn( 'Couldn\'t update media session position state. The API is currently unavailable.' )
 	}
-	
-	const isLive		= media.duration === Infinity
-	const isNotLoaded	= isNaN( media.duration )
-
-	if ( isLive || isNotLoaded ) {
+		
+	if ( isNaN( media.duration ) ) {
 		return navigator.mediaSession.setPositionState( {} )
 	}
+
+	const isLive = media.duration === Infinity
 	
 	navigator.mediaSession.setPositionState( {
 		duration	: media.duration,
 		playbackRate: media.playbackRate,
-		position	: media.currentTime,
+		position	: ! isLive ? media.currentTime : 0,
 	} )
 	
 }
