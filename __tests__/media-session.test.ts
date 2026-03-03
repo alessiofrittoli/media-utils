@@ -79,11 +79,24 @@ describe( 'MediaSession', () => {
 
 			updatePositionState( media )
 
-			expect( navigator.mediaSession.setPositionState ).toHaveBeenCalledWith( {
-				duration		: undefined,
+			expect( navigator.mediaSession.setPositionState )
+				.toHaveBeenCalledWith( {} )
+
+		} )
+
+
+		it( 'handles Infinity duration - LIVE media', () => {
+
+			const media = {
+				duration		: Infinity,
 				playbackRate	: 1,
-				position		: 10,
-			} )
+				currentTime		: 10,
+			} as HTMLMediaElement
+
+			updatePositionState( media )
+
+			expect( navigator.mediaSession.setPositionState )
+				.toHaveBeenCalledWith( {} )
 
 		} )
 
