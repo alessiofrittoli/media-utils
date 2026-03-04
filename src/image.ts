@@ -29,8 +29,9 @@ export const getFallbackImage = (
 	src: UrlInput = BLACK_BASE64_DATA_URI_IMAGE
 ) => {
 
-	const image = document.createElement( 'img' )
-	image.src	= Url.format( src )
+	const image			= document.createElement( 'img' )
+	image.crossOrigin	= 'anonymous'
+	image.src			= Url.format( src )
 
 	return image
 }
