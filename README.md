@@ -1772,6 +1772,31 @@ console.log(formatMediaTiming(Infinity, true)); // Outputs: "0:00:00"
 
 ---
 
+##### `getPreloadStrategy`
+
+Determines the optimal preload strategy for media elements based on network conditions.
+
+It returns a value that corresponds to the preload attribute used in HTML media elements like `<video>` and `<audio>`.
+
+<details>
+
+<summary style="cursor:pointer">Returns</summary>
+
+Type: `HTMLMediaElement[ 'preload' ]`
+
+The recommended preload attribute value ('none', 'metadata', or 'auto').
+
+- Returns 'auto' if network connection information is unavailable
+- Returns 'none' if data saver mode is enabled
+- Returns 'metadata' for slow-2g or 2g connections
+- Returns 'auto' for faster connections (3g, 4g, etc.)
+
+</details>
+
+---
+
+---
+
 ### Development
 
 #### Install depenendencies
