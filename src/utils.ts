@@ -1,5 +1,7 @@
 import { padStart } from '@alessiofrittoli/math-utils'
 import { secondsToUnit } from '@alessiofrittoli/date-utils'
+import { getConnection } from '@alessiofrittoli/web-utils'
+
 
 /**
  * Formats a time value in seconds into a human-readable media timing string (M:SS or H:MM:SS).
@@ -27,4 +29,38 @@ export const formatMediaTiming = ( time: number, showHours = false ) => {
 		padStart( units.seconds || 0, 2 ),
 	].filter( Boolean ).join( ':' )
 	
+}
+
+
+/**
+ * Determines the optimal preload strategy for media elements based on network conditions.
+ * 
+ * @returns The recommended preload attribute value ('none', 'metadata', or 'auto') based on:
+ * - Returns 'auto' if network connection information is unavailable
+ * - Returns 'none' if data saver mode is enabled
+ * - Returns 'metadata' for slow-2g or 2g connections
+ * - Returns 'auto' for faster connections (3g, 4g, etc.)
+ * 
+ * @example
+ * ```ts
+ * const videoElement   = document.createElement( 'video' )
+ * videoElement.src     = 'video.mp4'
+ * videoElement.preload = getPreloadStrategy()
+ * ```
+ */
+export const getPreloadStrategy = (): HTMLMediaElement[ 'preload' ] => {
+
+	const connection = getConnection().network
+
+	if ( ! connection ) return 'auto'
+
+	if ( connection.saveData ) return 'none'
+
+	if (
+		connection.effectiveType === 'slow-2g' || 
+		connection.effectiveType === '2g'
+	) return 'metadata'
+
+	return 'auto'
+
 }

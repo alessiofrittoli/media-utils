@@ -216,7 +216,7 @@ describe( 'image', () => {
 					.not.toHaveBeenCalledWith( media )
 				
 				expect( mockCreateImageBitmap )
-					.toHaveBeenCalledWith( { src: BLACK_BASE64_DATA_URI_IMAGE } )
+					.toHaveBeenCalledWith( { src: BLACK_BASE64_DATA_URI_IMAGE, crossOrigin: 'anonymous' } )
 
 				expect( consoleErrorSpy ).toHaveBeenCalled()
 				consoleErrorSpy.mockRestore()
