@@ -1,6 +1,6 @@
 {
 	"name": "@alessiofrittoli/media-utils",
-	"version": "1.3.0",
+	"version": "1.4.0",
 	"description": "TypeScript media utility library",
 	"type": "module",
 	"author": {
