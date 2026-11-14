@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+// oxlint-disable typescript/unbound-method
 
 import {
 	updatePositionState,
@@ -8,188 +9,162 @@ import {
 	updateMediaMetadataAndPosition,
 	type MediaSessionMetadata,
 } from '@/media-session'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+const MediaMetadata = vi.fn(
+	class {
+		public constructor(init: MediaMetadataInit) {
+			return init
+		}
+	},
+)
 
-describe( 'MediaSession', () => {
-
+describe('MediaSession', () => {
 	let originalMediaSession: MediaSession
-	let originalMediaMetadata: typeof window.MediaMetadata
 
-	beforeEach( () => {
+	beforeEach(() => {
+		originalMediaSession = navigator.mediaSession
 
-		originalMediaSession	= navigator.mediaSession
-		originalMediaMetadata	= window.MediaMetadata
-
-		Object.defineProperty( navigator, 'mediaSession', {
-			configurable	: true,
-			writable		: true,
-			value			: {
-				setPositionState	: jest.fn(),
-				metadata			: undefined,
+		Object.defineProperty(navigator, 'mediaSession', {
+			configurable: true,
+			writable: true,
+			value: {
+				setPositionState: vi.fn(),
+				metadata: undefined,
 			},
-		} )
+		})
 
-		window.MediaMetadata = jest.fn().mockImplementation( data => data )
+		vi.stubGlobal('MediaMetadata', MediaMetadata)
+	})
 
-	} )
+	afterEach(() => {
+		Object.defineProperty(navigator, 'mediaSession', {
+			configurable: true,
+			writable: true,
+			value: originalMediaSession,
+		})
 
+		vi.clearAllMocks()
+	})
 
-	afterEach( () => {
-
-		Object.defineProperty( navigator, 'mediaSession', {
-			configurable	: true,
-			writable		: true,
-			value			: originalMediaSession,
-		} )
-
-		window.MediaMetadata = originalMediaMetadata
-
-		jest.clearAllMocks()
-
-	} )
-
-	describe( 'updatePositionState', () => {
-
-		it( 'calls setPositionState with correct values', () => {
-
+	describe('updatePositionState', () => {
+		it('calls setPositionState with correct values', () => {
 			const media = {
-				duration		: 120,
-				playbackRate	: 1,
-				currentTime		: 30,
+				duration: 120,
+				playbackRate: 1,
+				currentTime: 30,
 			} as HTMLMediaElement
 
-			updatePositionState( media )
+			updatePositionState(media)
 
-			expect( navigator.mediaSession.setPositionState ).toHaveBeenCalledWith( {
-				duration		: 120,
-				playbackRate	: 1,
-				position		: 30,
-			} )
+			expect(navigator.mediaSession.setPositionState).toHaveBeenCalledWith({
+				duration: 120,
+				playbackRate: 1,
+				position: 30,
+			})
+		})
 
-		} )
-
-
-		it( 'handles NaN duration - unloaded media', () => {
-
+		it('handles NaN duration - unloaded media', () => {
 			const media = {
-				duration		: NaN,
-				playbackRate	: 1,
-				currentTime		: 10,
+				duration: NaN,
+				playbackRate: 1,
+				currentTime: 10,
 			} as HTMLMediaElement
 
-			updatePositionState( media )
+			updatePositionState(media)
 
-			expect( navigator.mediaSession.setPositionState )
-				.toHaveBeenCalledWith( {} )
+			expect(navigator.mediaSession.setPositionState).toHaveBeenCalledWith({})
+		})
 
-		} )
-
-
-		it( 'handles Infinity duration - LIVE media', () => {
-
+		it('handles Infinity duration - LIVE media', () => {
 			const media = {
-				duration		: Infinity,
-				playbackRate	: 1,
-				currentTime		: 10,
+				duration: Infinity,
+				playbackRate: 1,
+				currentTime: 10,
 			} as HTMLMediaElement
 
-			updatePositionState( media )
+			updatePositionState(media)
 
-			expect( navigator.mediaSession.setPositionState )
-				.toHaveBeenCalledWith( {
-					duration	: Infinity,
-					playbackRate: 1,
-					position	: 0,
-				} )
+			expect(navigator.mediaSession.setPositionState).toHaveBeenCalledWith({
+				duration: Infinity,
+				playbackRate: 1,
+				position: 0,
+			})
+		})
 
-		} )
+		it('outputs warning if mediaSession or setPositionState is unavailable', () => {
+			const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-
-		it( 'outputs warning if mediaSession or setPositionState is unavailable', () => {
-
-			const warnSpy = (
-				jest.spyOn( console, 'warn' ).mockImplementation( () => {} )
-			)
-			
-			Object.defineProperty( navigator, 'mediaSession', {
-				configurable	: true,
-				writable		: true,
-				value			: undefined,
-			} )
+			Object.defineProperty(navigator, 'mediaSession', {
+				configurable: true,
+				writable: true,
+				value: undefined,
+			})
 
 			const media = {} as HTMLMediaElement
-			
-			updatePositionState( media )
 
-			expect( warnSpy ).toHaveBeenCalledWith(
-				"Couldn't update media session position state. The API is currently unavailable."
+			updatePositionState(media)
+
+			expect(warnSpy).toHaveBeenCalledWith(
+				"Couldn't update media session position state. The API is currently unavailable.",
 			)
 
 			warnSpy.mockRestore()
+		})
+	})
 
-		} )
-
-	} )
-
-
-	describe( 'updateMediaMetadata', () => {
-
-		it( 'sets mediaSession.metadata with formatted artwork data', () => {
-
+	describe('updateMediaMetadata', () => {
+		it('sets mediaSession.metadata with formatted artwork data', () => {
 			const data: MediaSessionMetadata = {
-				title	: 'Test Song',
-				artist	: 'Test Artist',
-				album	: 'Test Album',
-				artwork	: [
+				title: 'Test Song',
+				artist: 'Test Artist',
+				album: 'Test Album',
+				artwork: [
 					{ src: { hostname: 'example.com', pathname: 'art.png' }, sizes: 128, type: 'image/png' },
 				],
 			}
 
-			updateMediaMetadata( data )
+			updateMediaMetadata(data)
 
 			const formatted = {
-				title	: data.title,
-				album	: data.album,
-				artist	: data.artist,
-				artwork	: [
+				title: data.title,
+				album: data.album,
+				artist: data.artist,
+				artwork: [
 					{
-						sizes	: '128x128',
-						type	: 'image/png',
-						src		: 'http://example.com/art.png',
+						sizes: '128x128',
+						type: 'image/png',
+						src: 'http://example.com/art.png',
 					},
 				],
 			}
 
-			expect( window.MediaMetadata ).toHaveBeenCalledWith( formatted )
-			expect( navigator.mediaSession.metadata ).toEqual( formatted )
+			expect(window.MediaMetadata).toHaveBeenCalledWith(formatted)
+			expect(navigator.mediaSession.metadata).toEqual(formatted)
+		})
 
-		} )
-		
-		
-		it( 'correctly handles artwork sizes', () => {
-
+		it('correctly handles artwork sizes', () => {
 			const data: MediaSessionMetadata = {
-				artwork	: [
-					
+				artwork: [
 					{ src: '/art.png', type: 'image/png' },
 					// @ts-expect-error negative testing
-					{ src: '/art.png', sizes: [ undefined, undefined ], type: 'image/png' },
+					{ src: '/art.png', sizes: [undefined, undefined], type: 'image/png' },
 					{ src: '/art.png', sizes: 96, type: 'image/png' },
-					{ src: '/art.png', sizes: [ 128 ], type: 'image/png' },
+					{ src: '/art.png', sizes: [128], type: 'image/png' },
 					// @ts-expect-error negative testing
-					{ src: '/art.png', sizes: [ undefined, 192 ], type: 'image/png' },
-					{ src: '/art.png', sizes: [ NaN, 256 ], type: 'image/png' },
-					{ src: '/art.png', sizes: [ 384, NaN ], type: 'image/png' },
-					{ src: '/art.png', sizes: [ 512, 288 ], type: 'image/png' },
+					{ src: '/art.png', sizes: [undefined, 192], type: 'image/png' },
+					{ src: '/art.png', sizes: [NaN, 256], type: 'image/png' },
+					{ src: '/art.png', sizes: [384, NaN], type: 'image/png' },
+					{ src: '/art.png', sizes: [512, 288], type: 'image/png' },
 				],
 			}
-			
-			updateMediaMetadata( data )
-			
+
+			updateMediaMetadata(data)
+
 			const formatted = {
-				title	: data.title,
-				album	: data.album,
-				artist	: data.artist,
+				title: data.title,
+				album: data.album,
+				artist: data.artist,
 				artwork: [
 					{ sizes: '', type: 'image/png', src: '/art.png' },
 					{ sizes: '', type: 'image/png', src: '/art.png' },
@@ -202,100 +177,84 @@ describe( 'MediaSession', () => {
 				],
 			}
 
-			expect( window.MediaMetadata ).toHaveBeenCalledWith( formatted )
-			expect( navigator.mediaSession.metadata ).toEqual( formatted )
+			expect(window.MediaMetadata).toHaveBeenCalledWith(formatted)
+			expect(navigator.mediaSession.metadata).toEqual(formatted)
+		})
 
-		} )
-
-
-		it( 'handles missing artwork', () => {
-			
+		it('handles missing artwork', () => {
 			const data: MediaSessionMetadata = {
 				title: 'No Artwork',
 			}
 
-			updateMediaMetadata( data )
+			updateMediaMetadata(data)
 
-			expect( window.MediaMetadata ).toHaveBeenCalledWith( {
-				title	: data.title,
-				album	: data.album,
-				artist	: data.artist,
-				artwork	: undefined,
-			} )
+			expect(window.MediaMetadata).toHaveBeenCalledWith({
+				title: data.title,
+				album: data.album,
+				artist: data.artist,
+				artwork: undefined,
+			})
+		})
 
-		} )
+		it('outputs warning if mediaSession or MediaMetadata is unavailable', () => {
+			const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
+			Object.defineProperty(navigator, 'mediaSession', {
+				configurable: true,
+				writable: true,
+				value: undefined,
+			})
 
-		it( 'outputs warning if mediaSession or MediaMetadata is unavailable', () => {
-			
-			const warnSpy = (
-				jest.spyOn( console, 'warn' ).mockImplementation( () => {} )
-			)
+			updateMediaMetadata({})
 
-			Object.defineProperty( navigator, 'mediaSession', {
-				configurable	: true,
-				writable		: true,
-				value			: undefined,
-			} )
-
-			updateMediaMetadata( {} )
-
-			expect( warnSpy ).toHaveBeenCalledWith(
-				"Couldn't update MediaSession metadata. The API is currently unavailable."
+			expect(warnSpy).toHaveBeenCalledWith(
+				"Couldn't update MediaSession metadata. The API is currently unavailable.",
 			)
 
 			warnSpy.mockRestore()
+		})
+	})
 
-		} )
-
-	} )
-
-
-	describe( 'updateMediaMetadataAndPosition', () => {
-
-		it( 'calls updateMediaMetadata and updatePositionState', () => {
-
+	describe('updateMediaMetadataAndPosition', () => {
+		it('calls updateMediaMetadata and updatePositionState', () => {
 			const media = {
-				duration		: 120,
-				playbackRate	: 1,
-				currentTime		: 30,
+				duration: 120,
+				playbackRate: 1,
+				currentTime: 30,
 			} as HTMLMediaElement
 
 			const data: MediaSessionMetadata = {
-				title	: 'Test Song',
-				artist	: 'Test Artist',
-				album	: 'Test Album',
-				artwork	: [
+				title: 'Test Song',
+				artist: 'Test Artist',
+				album: 'Test Album',
+				artwork: [
 					{ src: { hostname: 'example.com', pathname: 'art.png' }, sizes: 128, type: 'image/png' },
 				],
 			}
 
-			updateMediaMetadataAndPosition( { media, data } )
+			updateMediaMetadataAndPosition({ media, data })
 
-			expect( navigator.mediaSession.setPositionState ).toHaveBeenCalledWith( {
-				duration		: 120,
-				playbackRate	: 1,
-				position		: 30,
-			} )
+			expect(navigator.mediaSession.setPositionState).toHaveBeenCalledWith({
+				duration: 120,
+				playbackRate: 1,
+				position: 30,
+			})
 
 			const formatted = {
-				title	: data.title,
-				album	: data.album,
-				artist	: data.artist,
+				title: data.title,
+				album: data.album,
+				artist: data.artist,
 				artwork: [
 					{
-						sizes	: '128x128',
-						type	: 'image/png',
-						src		: 'http://example.com/art.png',
+						sizes: '128x128',
+						type: 'image/png',
+						src: 'http://example.com/art.png',
 					},
 				],
 			}
 
-			expect( window.MediaMetadata ).toHaveBeenCalledWith( formatted )
-			expect( navigator.mediaSession.metadata ).toEqual( formatted )
-
-		} )
-
-	} )
-
-} )
+			expect(window.MediaMetadata).toHaveBeenCalledWith(formatted)
+			expect(navigator.mediaSession.metadata).toEqual(formatted)
+		})
+	})
+})

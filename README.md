@@ -45,6 +45,13 @@
 ### Table of Contents
 
 - [Getting started](#getting-started)
+- [Development](#development)
+  - [Local development](#local-development)
+  - [Production build](#production-build)
+  - [Unit tests](#unit-tests)
+    - [Run tests with coverage](#run-tests-with-coverage)
+  - [Contributing](#contributing)
+  - [Security](#security)
 - [API Reference](#api-reference)
   - [MIME types](#mime-types)
   - [MediaSession](#mediasession)
@@ -55,13 +62,6 @@
   - [Image Video Stream](#image-video-stream)
   - [Media Artwork Picture-in-Picture](#media-artwork-picture-in-picture)
   - [Utilities](#utilities)
-- [Development](#development)
-  - [Install depenendencies](#install-depenendencies)
-  - [Build the source code](#build-the-source-code)
-  - [ESLint](#eslint)
-  - [Jest](#jest)
-- [Contributing](#contributing)
-- [Security](#security)
 - [Credits](#made-with-)
 
 ---
@@ -79,6 +79,84 @@ or using `pnpm`
 ```bash
 pnpm i @alessiofrittoli/media-utils
 ```
+
+---
+
+### Development
+
+Run the following to start development
+
+```shell
+nvm use
+
+pnpm i
+```
+
+#### Local development
+
+Run the following
+
+```shell
+pnpm dev
+```
+
+This will generate unminified output code, sourcemaps and will enable source file watcher.
+
+---
+
+#### Production build
+
+Run the following to create a local production build
+
+```shell
+pnpm build
+```
+
+This will generate minified output code without sourcemaps.
+
+---
+
+#### Unit tests
+
+Run all the defined test suites by running the following:
+
+```shell
+# Run tests and watch file changes.
+pnpm test:watch
+
+# Run tests in a CI environment.
+pnpm test:ci
+```
+
+---
+
+##### Run tests with coverage
+
+An HTTP server is then started to serve coverage files from `./coverage` folder.
+
+⚠️ You may see a blank page the first time you run this command. Simply refresh the browser to see the updates.
+
+```shell
+pnpm test:coverage:serve
+```
+
+---
+
+#### Contributing
+
+Contributions are truly welcome!
+
+Please refer to the [Contributing Doc](./CONTRIBUTING.md) for more information on how to start contributing to this project.
+
+Help keep this project up to date with [GitHub Sponsor][sponsor-url].
+
+[![GitHub Sponsor][sponsor-badge]][sponsor-url]
+
+---
+
+#### Security
+
+If you believe you have found a security vulnerability, we encourage you to **_responsibly disclose this and NOT open a public issue_**. We will investigate all legitimate reports. Email `security@alessiofrittoli.it` to disclose any security vulnerabilities.
 
 ---
 
@@ -121,11 +199,11 @@ Type: `MIMEType`
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { getMimeType } from "@alessiofrittoli/media-utils";
+import { getMimeType } from '@alessiofrittoli/media-utils'
 
-console.log(getMimeType("/path/to/video-file.mp4")); // Outputs: 'video/mp4'
-console.log(getMimeType("/path/to/audio-file.mp4", "audio")); // Outputs: 'audio/mp4'
-console.log(getMimeType("/path/to/audio-file.mp3")); // Outputs: 'audio/mpeg'
+console.log(getMimeType('/path/to/video-file.mp4')) // Outputs: 'video/mp4'
+console.log(getMimeType('/path/to/audio-file.mp4', 'audio')) // Outputs: 'audio/mp4'
+console.log(getMimeType('/path/to/audio-file.mp3')) // Outputs: 'audio/mpeg'
 ```
 
 </details>
@@ -176,17 +254,17 @@ An array of MIME types based on the `accept` value. `[ '*' ]` if a wildcard or n
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { getAllowedMimeTypes } from "@alessiofrittoli/media-utils";
+import { getAllowedMimeTypes } from '@alessiofrittoli/media-utils'
 
-console.log(getAllowedMimeTypes());
-console.log(getAllowedMimeTypes("*"));
-console.log(getAllowedMimeTypes("image"));
-console.log(getAllowedMimeTypes("audio/*"));
-console.log(getAllowedMimeTypes("image,video"));
-console.log(getAllowedMimeTypes("image/*,video/*"));
-console.log(getAllowedMimeTypes(".mp3,mp4"));
-console.log(getAllowedMimeTypes(".jpg, .png"));
-console.log(getAllowedMimeTypes("image/jpeg,.jpg"));
+console.log(getAllowedMimeTypes())
+console.log(getAllowedMimeTypes('*'))
+console.log(getAllowedMimeTypes('image'))
+console.log(getAllowedMimeTypes('audio/*'))
+console.log(getAllowedMimeTypes('image,video'))
+console.log(getAllowedMimeTypes('image/*,video/*'))
+console.log(getAllowedMimeTypes('.mp3,mp4'))
+console.log(getAllowedMimeTypes('.jpg, .png'))
+console.log(getAllowedMimeTypes('image/jpeg,.jpg'))
 ```
 
 </details>
@@ -282,15 +360,15 @@ Update `MediaSession` position state.
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { updatePositionState } from "@alessiofrittoli/media-utils";
+import { updatePositionState } from '@alessiofrittoli/media-utils'
 
-navigator.mediaSession.setActionHandler("seekto", (details) => {
-  if (typeof details.seekTime === "undefined") return;
+navigator.mediaSession.setActionHandler('seekto', details => {
+  if (typeof details.seekTime === 'undefined') return
 
-  media.currentTime = details.seekTime;
+  media.currentTime = details.seekTime
 
-  updatePositionState(media);
-});
+  updatePositionState(media)
+})
 ```
 
 </details>
@@ -318,48 +396,48 @@ Update `MediaSession` metadata.
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { updateMediaMetadata } from "@alessiofrittoli/media-utils";
+import { updateMediaMetadata } from '@alessiofrittoli/media-utils'
 
 media.play().then(() => {
   updateMediaMetadata({
-    type: "audio/mpeg",
-    title: "Song name",
-    album: "Album name",
-    artist: "Artist name",
+    type: 'audio/mpeg',
+    title: 'Song name',
+    album: 'Album name',
+    artist: 'Artist name',
     artwork: [
       {
-        src: { pathname: "/path-to-image-96.png" },
+        src: { pathname: '/path-to-image-96.png' },
         size: 96,
-        type: "image/png",
+        type: 'image/png',
       },
       {
-        src: { pathname: "/path-to-image-128.png" },
+        src: { pathname: '/path-to-image-128.png' },
         size: 128,
-        type: "image/png",
+        type: 'image/png',
       },
       {
-        src: { pathname: "/path-to-image-192.png" },
+        src: { pathname: '/path-to-image-192.png' },
         size: 192,
-        type: "image/png",
+        type: 'image/png',
       },
       {
-        src: { pathname: "/path-to-image-256.png" },
+        src: { pathname: '/path-to-image-256.png' },
         size: 256,
-        type: "image/png",
+        type: 'image/png',
       },
       {
-        src: { pathname: "/path-to-image-384.png" },
+        src: { pathname: '/path-to-image-384.png' },
         size: 384,
-        type: "image/png",
+        type: 'image/png',
       },
       {
-        src: { pathname: "/path-to-image-512.png" },
+        src: { pathname: '/path-to-image-512.png' },
         size: 512,
-        type: "image/png",
+        type: 'image/png',
       },
     ],
-  });
-});
+  })
+})
 ```
 
 </details>
@@ -388,51 +466,51 @@ Update `MediaSession` metadata and position state.
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { updateMediaMetadataAndPosition } from "@alessiofrittoli/media-utils";
+import { updateMediaMetadataAndPosition } from '@alessiofrittoli/media-utils'
 
 media.play().then(() => {
   updateMediaMetadataAndPosition({
     media,
     data: {
-      type: "audio/mpeg",
-      title: "Song name",
-      album: "Album name",
-      artist: "Artist name",
+      type: 'audio/mpeg',
+      title: 'Song name',
+      album: 'Album name',
+      artist: 'Artist name',
       artwork: [
         {
-          src: { pathname: "/path-to-image-96.png" },
+          src: { pathname: '/path-to-image-96.png' },
           size: 96,
-          type: "image/png",
+          type: 'image/png',
         },
         {
-          src: { pathname: "/path-to-image-128.png" },
+          src: { pathname: '/path-to-image-128.png' },
           size: 128,
-          type: "image/png",
+          type: 'image/png',
         },
         {
-          src: { pathname: "/path-to-image-192.png" },
+          src: { pathname: '/path-to-image-192.png' },
           size: 192,
-          type: "image/png",
+          type: 'image/png',
         },
         {
-          src: { pathname: "/path-to-image-256.png" },
+          src: { pathname: '/path-to-image-256.png' },
           size: 256,
-          type: "image/png",
+          type: 'image/png',
         },
         {
-          src: { pathname: "/path-to-image-384.png" },
+          src: { pathname: '/path-to-image-384.png' },
           size: 384,
-          type: "image/png",
+          type: 'image/png',
         },
         {
-          src: { pathname: "/path-to-image-512.png" },
+          src: { pathname: '/path-to-image-512.png' },
           size: 512,
-          type: "image/png",
+          type: 'image/png',
         },
       ],
     },
-  });
-});
+  })
+})
 ```
 
 </details>
@@ -765,15 +843,15 @@ The `AudioEngine` associated with the given `media` or a new `AudioEngine` insta
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { getEngine } from "@alessiofrittoli/media-utils/audio";
+import { getEngine } from '@alessiofrittoli/media-utils/audio'
 
 const mute = (media: HTMLMediaElement) => {
-  getEngine(media).fade({ to: 0 });
-};
+  getEngine(media).fade({ to: 0 })
+}
 
 const unmute = (media: HTMLMediaElement) => {
-  getEngine(media).fade({ to: 1 });
-};
+  getEngine(media).fade({ to: 1 })
+}
 ```
 
 </details>
@@ -814,17 +892,17 @@ Type: `boolean`.
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { getEngine, destroyEngine } from "@alessiofrittoli/media-utils/audio";
+import { getEngine, destroyEngine } from '@alessiofrittoli/media-utils/audio'
 
 const stop = (media: HTMLMediaElement) => {
   getEngine(media).fade({
     to: 0,
     onEnd() {
-      media.pause();
-      destroyEngine(media);
+      media.pause()
+      destroyEngine(media)
     },
-  });
-};
+  })
+}
 ```
 
 </details>
@@ -858,14 +936,14 @@ This utility function acts as a wrapper handling [`AudioEngine`](#audioengine) i
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { fadeVolume } from "@alessiofrittoli/media-utils/audio";
+import { fadeVolume } from '@alessiofrittoli/media-utils/audio'
 
 const play = (media: HTMLMediaElement) => {
-  media.volume = 0;
+  media.volume = 0
   media.play().then(() => {
-    fadeVolume(media, { to: 1 });
-  });
-};
+    fadeVolume(media, { to: 1 })
+  })
+}
 ```
 
 </details>
@@ -1086,7 +1164,7 @@ The rendering result.
 Render a new image to the video stream.
 
 ```ts
-type RenderHandler = (options?: RenderOptions) => Promise<RenderResult>;
+type RenderHandler = (options?: RenderOptions) => Promise<RenderResult>
 ```
 
 ---
@@ -1096,7 +1174,7 @@ type RenderHandler = (options?: RenderOptions) => Promise<RenderResult>;
 Stop stream tracks and release allocated resources.
 
 ```ts
-type DestroyHandler = () => void;
+type DestroyHandler = () => void
 ```
 
 ---
@@ -1160,23 +1238,20 @@ A new Promise that resolves the allocated rendering resources.
 ###### Fetch and render image Blob
 
 ```ts
-import { fetch } from "@alessiofrittoli/fetcher";
-import {
-  getFallbackImage,
-  createImageVideoStream,
-} from "@alessiofrittoli/media-utils";
+import { getFallbackImage, createImageVideoStream } from '@alessiofrittoli/media-utils'
+import { fetch } from '@alessiofrittoli/fetcher'
 
 const createImageStream = async () => {
-  const { data: media, error } = await fetch<Blob>("/path-to/image.png", {
-    responseType: "blob",
-  });
+  const { data: media, error } = await fetch<Blob>('/path-to/image.png', {
+    responseType: 'blob',
+  })
 
   if (error) {
-    return createImageVideoStream({ media: getFallbackImage() });
+    return createImageVideoStream({ media: getFallbackImage() })
   }
 
-  return createImageVideoStream({ media });
-};
+  return createImageVideoStream({ media })
+}
 ```
 
 ---
@@ -1184,18 +1259,18 @@ const createImageStream = async () => {
 ###### Custom aspect ratio
 
 ```ts
-import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+import { createImageVideoStream } from '@alessiofrittoli/media-utils'
 
 const createImageStream = () => {
-  const media = document.createElement("img");
-  media.src = "/path-to/image.png";
+  const media = document.createElement('img')
+  media.src = '/path-to/image.png'
 
   return createImageVideoStream({
     media,
     aspectRatio: 16 / 9,
-    fit: "cover", // or 'contain'
-  });
-};
+    fit: 'cover', // or 'contain'
+  })
+}
 ```
 
 ---
@@ -1203,27 +1278,27 @@ const createImageStream = () => {
 ###### Update streamed content
 
 ```ts
-import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+import { createImageVideoStream } from '@alessiofrittoli/media-utils'
 
 const createImageStream = async () => {
-  const media = document.createElement("img");
-  media.src = "/path-to/image.png";
+  const media = document.createElement('img')
+  media.src = '/path-to/image.png'
 
   const { video, render } = await createImageVideoStream({
     media,
     aspectRatio: 16 / 9,
-    fit: "cover", // or 'contain'
-  });
+    fit: 'cover', // or 'contain'
+  })
 
   // update streamed content after 5 seconds
   setTimeout(() => {
-    media.src = "/path-to/image-2.png";
+    media.src = '/path-to/image-2.png'
 
-    await render({ aspectRatio: 1 });
-  }, 5000);
+    await render({ aspectRatio: 1 })
+  }, 5000)
 
-  return video;
-};
+  return video
+}
 ```
 
 ---
@@ -1231,25 +1306,25 @@ const createImageStream = async () => {
 ###### Using a previously created video
 
 ```ts
-import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+import { createImageVideoStream } from '@alessiofrittoli/media-utils'
 
 const createImageStream = async () => {
-  const video = document.createElement("video");
-  video.src = "/path-to/video.mp4";
+  const video = document.createElement('video')
+  video.src = '/path-to/video.mp4'
 
-  const media = document.createElement("img");
-  media.src = "/path-to/image.png";
+  const media = document.createElement('img')
+  media.src = '/path-to/image.png'
 
   // replace original video content with streamed image
   await createImageVideoStream({
     media,
     video,
     aspectRatio: 16 / 9,
-    fit: "cover", // or 'contain'
-  });
+    fit: 'cover', // or 'contain'
+  })
 
-  return video;
-};
+  return video
+}
 ```
 
 ---
@@ -1257,26 +1332,26 @@ const createImageStream = async () => {
 ###### Free allocated resources
 
 ```ts
-import { createImageVideoStream } from "@alessiofrittoli/media-utils";
+import { createImageVideoStream } from '@alessiofrittoli/media-utils'
 
 const createImageStream = async () => {
-  const media = document.createElement("img");
-  media.src = "/path-to/image.png";
+  const media = document.createElement('img')
+  media.src = '/path-to/image.png'
 
   // replace original video content with streamed image
   const { video, destroy } = await createImageVideoStream({
     media,
     aspectRatio: 16 / 9,
-    fit: "cover", // or 'contain'
-  });
+    fit: 'cover', // or 'contain'
+  })
 
   // free allocated resources after 5 seconds
   setTimeout(() => {
-    destroy();
-  }, 5000);
+    destroy()
+  }, 5000)
 
-  return video;
-};
+  return video
+}
 ```
 
 </details>
@@ -1449,47 +1524,42 @@ A new Promise that resolves to the Picture-in-Picture result containing the vide
 ###### Simple usage
 
 ```ts
-import {
-  ErrorCode,
-  openImagePictureInPicture,
-} from "@alessiofrittoli/media-utils";
+import { ErrorCode, openImagePictureInPicture } from '@alessiofrittoli/media-utils'
 
 try {
-  navigator.mediaSession.setActionHandler("enterpictureinpicture", async () => {
+  navigator.mediaSession.setActionHandler('enterpictureinpicture', async () => {
     try {
       await openImagePictureInPicture({
-        media: { pathname: "path/to/image.png" },
+        media: { pathname: 'path/to/image.png' },
         aspectRatio: 1,
-        fit: "cover",
-        onQuit: () => console.log("Picture-in-Picture closed"),
-      });
+        fit: 'cover',
+        onQuit: () => console.log('Picture-in-Picture closed'),
+      })
     } catch (_err) {
-      const err = _err as Error;
+      const err = _err as Error
 
-      const error = Exception.isException<string, ErrorCode>(err)
+      const error = Exception.isException<ErrorCode>(err)
         ? err
-        : new Exception(err.message, {
+        : new Exception({
+            message: err.message,
             code: ErrorCode.UNKNOWN,
             name: err.name,
             cause: err,
-          });
+          })
       switch (error.code) {
         case ErrorCode.PIP_NOT_SUPPORTED:
-          alert("Picture-In-Picture is not supported by the current browser.");
-          break;
+          alert('Picture-In-Picture is not supported by the current browser.')
+          break
         case ErrorCode.RENDERING_CONTEXT_UNAVAILABLE:
-          alert("Couldn't render image in Picture-in-Picture.");
-          break;
+          alert("Couldn't render image in Picture-in-Picture.")
+          break
         default:
-          console.error(error);
+          console.error(error)
       }
     }
-  });
+  })
 } catch (error) {
-  console.warn(
-    'Warning! The "enterpictureinpicture" media session action is not supported.',
-    error,
-  );
+  console.warn('Warning! The "enterpictureinpicture" media session action is not supported.', error)
 }
 ```
 
@@ -1498,25 +1568,22 @@ try {
 ###### Update image Picture-in-Picture content
 
 ```ts
-import {
-  openImagePictureInPicture,
-  type OpenImagePictureInPicture,
-} from "@alessiofrittoli/media-utils";
+import { openImagePictureInPicture, type OpenImagePictureInPicture } from '@alessiofrittoli/media-utils'
 
-let resources: OpenImagePictureInPicture;
+let resources: OpenImagePictureInPicture
 
-navigator.mediaSession.setActionHandler("enterpictureinpicture", async () => {
+navigator.mediaSession.setActionHandler('enterpictureinpicture', async () => {
   resources = await openImagePictureInPicture({
-    media: { pathname: "/path/to/image.png" },
-  });
-});
+    media: { pathname: '/path/to/image.png' },
+  })
+})
 
-navigator.mediaSession.setActionHandler("nexttrack", async () => {
+navigator.mediaSession.setActionHandler('nexttrack', async () => {
   resources = await openImagePictureInPicture({
-    media: { pathname: "/path/to/image.png" },
+    media: { pathname: '/path/to/image.png' },
     ...resources,
-  });
-});
+  })
+})
 ```
 
 </details>
@@ -1564,19 +1631,19 @@ A new Promise that resolves with an object containing the video element displaye
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { openVideoArtworkPictureInPicture } from "@alessiofrittoli/media-utils";
+import { openVideoArtworkPictureInPicture } from '@alessiofrittoli/media-utils'
 
 // With a URL
 const { video } = await openVideoArtworkPictureInPicture({
-  media: "/song-artwork-video.mp4",
-  onQuit: () => console.log("Picture-in-Picture closed"),
-});
+  media: '/song-artwork-video.mp4',
+  onQuit: () => console.log('Picture-in-Picture closed'),
+})
 
 // With an HTMLVideoElement
-const media = document.querySelector("video");
-media.src = "/song-artwork-video.mp4";
+const media = document.querySelector('video')
+media.src = '/song-artwork-video.mp4'
 
-const { video } = await openVideoArtworkPictureInPicture({ media });
+const { video } = await openVideoArtworkPictureInPicture({ media })
 ```
 
 </details>
@@ -1625,25 +1692,25 @@ A new Promise that resolves to the Picture-in-Picture result.
 ###### Simple usage
 
 ```ts
-import { openArtworkPictureInPicture } from "@alessiofrittoli/media-utils";
+import { openArtworkPictureInPicture } from '@alessiofrittoli/media-utils'
 
 const result = await openArtworkPictureInPicture({
   media: {
-    type: "image/png",
-    src: "/path/to/image.png",
+    type: 'image/png',
+    src: '/path/to/image.png',
   },
   aspectRatio: 1,
-  fit: "cover",
-});
+  fit: 'cover',
+})
 
 // update
 await openArtworkPictureInPicture({
   media: {
-    type: "video/mp4",
-    src: "/path/to/video.mp4",
+    type: 'video/mp4',
+    src: '/path/to/video.mp4',
   },
   ...result,
-});
+})
 ```
 
 ---
@@ -1655,20 +1722,18 @@ import {
   openArtworkPictureInPicture,
   updateMediaMetadata,
   type MediaSessionMetadata,
-} from "@alessiofrittoli/media-utils";
+} from '@alessiofrittoli/media-utils'
 
 const data: MediaSessionMetadata = {
-  title: "Test Song",
-  artist: "Test Artist",
-  album: "Test Album",
-  artwork: [
-    { src: "/path/to/song-artwork.png", sizes: 128, type: "image/png" },
-  ],
-};
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: 'Test Album',
+  artwork: [{ src: '/path/to/song-artwork.png', sizes: 128, type: 'image/png' }],
+}
 
-updateMediaMetadata(data);
+updateMediaMetadata(data)
 
-await openArtworkPictureInPicture();
+await openArtworkPictureInPicture()
 ```
 
 ---
@@ -1686,9 +1751,10 @@ try {
 } catch (_err) {
   const err = _err as Error;
 
-  const error = Exception.isException<string, ErrorCode>(err)
+  const error = Exception.isException<ErrorCode>(err)
     ? err
-    : new Exception(err.message, {
+    : new Exception({
+        message: err.message,
         code: ErrorCode.UNKNOWN,
         name: err.name,
         cause: err,
@@ -1747,25 +1813,25 @@ If the time is 0 or invalid, returns "0:00".
 <summary style="cursor:pointer">Examples</summary>
 
 ```ts
-import { formatMediaTiming } from "@alessiofrittoli/media-utils";
+import { formatMediaTiming } from '@alessiofrittoli/media-utils'
 
-console.log(formatMediaTiming(45)); // Outputs: "0:45"
-console.log(formatMediaTiming(90)); // Outputs: "1:30"
-console.log(formatMediaTiming(125)); // Outputs: "2:05"
+console.log(formatMediaTiming(45)) // Outputs: "0:45"
+console.log(formatMediaTiming(90)) // Outputs: "1:30"
+console.log(formatMediaTiming(125)) // Outputs: "2:05"
 
-console.log(formatMediaTiming(3661, true)); // Outputs: "1:01:01"
+console.log(formatMediaTiming(3661, true)) // Outputs: "1:01:01"
 
-console.log(formatMediaTiming(0)); // Outputs: "0:00"
-console.log(formatMediaTiming(-NaN)); // Outputs: "0:00"
-console.log(formatMediaTiming(NaN)); // Outputs: "0:00"
-console.log(formatMediaTiming(-Infinity)); // Outputs: "0:00"
-console.log(formatMediaTiming(Infinity)); // Outputs: "0:00"
+console.log(formatMediaTiming(0)) // Outputs: "0:00"
+console.log(formatMediaTiming(-NaN)) // Outputs: "0:00"
+console.log(formatMediaTiming(NaN)) // Outputs: "0:00"
+console.log(formatMediaTiming(-Infinity)) // Outputs: "0:00"
+console.log(formatMediaTiming(Infinity)) // Outputs: "0:00"
 
-console.log(formatMediaTiming(0, true)); // Outputs: "0:00:00"
-console.log(formatMediaTiming(-NaN, true)); // Outputs: "0:00:00"
-console.log(formatMediaTiming(NaN, true)); // Outputs: "0:00:00"
-console.log(formatMediaTiming(-Infinity, true)); // Outputs: "0:00:00"
-console.log(formatMediaTiming(Infinity, true)); // Outputs: "0:00:00"
+console.log(formatMediaTiming(0, true)) // Outputs: "0:00:00"
+console.log(formatMediaTiming(-NaN, true)) // Outputs: "0:00:00"
+console.log(formatMediaTiming(NaN, true)) // Outputs: "0:00:00"
+console.log(formatMediaTiming(-Infinity, true)) // Outputs: "0:00:00"
+console.log(formatMediaTiming(Infinity, true)) // Outputs: "0:00:00"
 ```
 
 </details>
@@ -1794,80 +1860,6 @@ The recommended preload attribute value ('none', 'metadata', or 'auto').
 </details>
 
 ---
-
----
-
-### Development
-
-#### Install depenendencies
-
-```bash
-npm install
-```
-
-or using `pnpm`
-
-```bash
-pnpm i
-```
-
-#### Build the source code
-
-Run the following command to test and build code for distribution.
-
-```bash
-pnpm build
-```
-
-#### [ESLint](https://www.npmjs.com/package/eslint)
-
-warnings / errors check.
-
-```bash
-pnpm lint
-```
-
-#### [Jest](https://npmjs.com/package/jest)
-
-Run all the defined test suites by running the following:
-
-```bash
-# Run tests and watch file changes.
-pnpm test:watch
-
-# Run tests in a CI environment.
-pnpm test:ci
-```
-
-- See [`package.json`](./package.json) file scripts for more info.
-
-Run tests with coverage.
-
-An HTTP server is then started to serve coverage files from `./coverage` folder.
-
-⚠️ You may see a blank page the first time you run this command. Simply refresh the browser to see the updates.
-
-```bash
-test:coverage:serve
-```
-
----
-
-### Contributing
-
-Contributions are truly welcome!
-
-Please refer to the [Contributing Doc](./CONTRIBUTING.md) for more information on how to start contributing to this project.
-
-Help keep this project up to date with [GitHub Sponsor][sponsor-url].
-
-[![GitHub Sponsor][sponsor-badge]][sponsor-url]
-
----
-
-### Security
-
-If you believe you have found a security vulnerability, we encourage you to **_responsibly disclose this and NOT open a public issue_**. We will investigate all legitimate reports. Email `security@alessiofrittoli.it` to disclose any security vulnerabilities.
 
 ### Made with ☕
 
